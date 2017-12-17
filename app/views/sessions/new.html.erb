@@ -1,10 +1,21 @@
 <h1>登录</h1>
-
-<% if flash[:login_error] %>
-    <div><%= raw flash[:login_error] %></div>
-<% end %>
+<%
+  cu = session[:current_user]
+  puts cu
+%>
+<div>Wellcom :
+  <% if cu %>
+      <%= cu['name'] %>
+  <% else %>
+      游客
+  <% end %>
+  !
+</div>
+<div style="color: red">
+  <%= flash[:error_info] %>
+</div>
+<!-- 改成ajax，error时只弹出信息，不刷新页面 -->
 <%= form_for :session, url: :sessions_create do |f| %>
-    <%= kindeditor_tag :content, '', :simple_mode => true%>
     <p>
       <%= f.label :name %>
       <%= f.text_field :name %>
@@ -14,7 +25,39 @@
       <%= f.label :password %>
       <%= f.password_field :password %>
     </p>
-
-    <p><%= f.button '登录' %></p>
+    <% if flash[:login_button] %>
+        <p><%= f.button '切换用户' %></p>
+    <% else %>
+        <p><%= f.button '登录' %></p>
+    <% end %>
 
 <% end %>
+
+<!-- 改成ajax，只刷新tweets -->
+<%= form_for :session, url: :sessions_post_tweet do |f| %>
+    <%= kindeditor_tag :content, '', :simple_mode => true %>
+    <p><%= f.button '发布' %></p>
+<% end %>
+
+<div id="tweets">
+  <%
+    if cu
+      tweets = Tweet.list_tweets(cu['id'])
+    else
+      tweets = Tweet.list_tweets(-1)
+    end
+
+    for tweet in tweets
+  %>
+      <div id=" <%= tweet[:id] %> ">
+        <%= raw tweet[:contents] %>
+      </div>
+      <p>post user_id:<%= tweet[:user_id] %></p>
+      <p>thumbs up num:<%= tweet[:thumbs_up_num] %></p>
+      <p>transmit num:<%= tweet[:transmit_num] %></p>
+      <p>transmit from id:<%= tweet[:transmit_from_id] %></p>
+  <%
+    end
+
+  %>
+</div>
