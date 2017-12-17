@@ -47,7 +47,7 @@
       tweets = Tweet.list_tweets(-1)
     end
 
-    for tweet in tweets
+    tweets.each do |tweet|
   %>
       <div id=" <%= tweet[:id] %> ">
         <%= raw tweet[:contents] %>
