@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  contents: MyString
+  thumbs_up_num: 1
+  transmit_num: 1
+  transmit_from_id: MyString
+
+two:
+  user_id: 1
+  contents: MyString
+  thumbs_up_num: 1
+  transmit_num: 1
+  transmit_from_id: MyString

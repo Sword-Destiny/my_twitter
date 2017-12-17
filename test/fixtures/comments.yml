@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tweet_id: 1
+  contents: MyString
+  thumbs_up_num: 1
+  replyed_num: 1
+  reply_comment_id: 1
+  top_comment_id: 1
+
+two:
+  tweet_id: 1
+  contents: MyString
+  thumbs_up_num: 1
+  replyed_num: 1
+  reply_comment_id: 1
+  top_comment_id: 1

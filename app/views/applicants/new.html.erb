@@ -1,0 +1,28 @@
+<h1>注册</h1>
+
+<% if @user.errors.any? %>
+    <ul>
+      <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+      <% end %>
+    </ul>
+<% end %>
+
+<%= form_for @user, url: :applicants_create do |f| %>
+    <p>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+    </p>
+
+    <p>
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+    </p>
+
+    <p>
+      <%= f.label :password_confirmation %>
+      <%= f.password_field :password_confirmation %>
+    </p>
+
+    <p><%= f.button '提交' %></p>
+<% end %>

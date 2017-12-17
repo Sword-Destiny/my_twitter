@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  password_digest: MyString
+  unread_info_num: 1
+
+two:
+  name: MyString
+  password_digest: MyString
+  unread_info_num: 1

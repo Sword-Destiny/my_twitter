@@ -1,0 +1,20 @@
+<h1>登录</h1>
+
+<% if flash[:login_error] %>
+    <div><%= raw flash[:login_error] %></div>
+<% end %>
+<%= form_for :session, url: :sessions_create do |f| %>
+    <%= kindeditor_tag :content, '', :simple_mode => true%>
+    <p>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+    </p>
+
+    <p>
+      <%= f.label :password %>
+      <%= f.password_field :password %>
+    </p>
+
+    <p><%= f.button '登录' %></p>
+
+<% end %>
