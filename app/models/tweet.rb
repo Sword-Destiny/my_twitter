@@ -1,4 +1,6 @@
 class Tweet < ActiveRecord::Base
+
+  # 获取所有tweet
   def Tweet.list_tweets(user_id)
     if user_id!=-1
       my_tweets = Tweet.where('user_id = ?', user_id)
@@ -15,6 +17,7 @@ class Tweet < ActiveRecord::Base
 
   end
 
+  # 发布tweet
   def Tweet.add_tweet(user_id, contents)
     tweet = Tweet.new
     tweet[:user_id] = user_id
@@ -22,10 +25,22 @@ class Tweet < ActiveRecord::Base
     tweet[:thumbs_up_num] = 0
     tweet[:transmit_num] = 0
     tweet[:transmit_from_id] = -1
+    tweet[:comment_num] = 0
     if tweet.save
       tweet
     else
       nil
+    end
+  end
+
+  def Tweet.delete_tweet(tweet_id)
+    tweet = Tweet.find_by(id: tweet_id)
+    if tweet
+      # 删除可能会失败
+      Tweet.delete_all('id = ?', tweet_id)
+      Comment.delete_all('tweet_id = ?', tweet_id)
+    else
+      false
     end
   end
 

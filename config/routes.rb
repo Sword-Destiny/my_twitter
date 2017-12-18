@@ -1,11 +1,5 @@
 Rails.application.routes.draw do
 
-  get 'im_info/read_info'
-
-  get 'im_info/send_info'
-
-  get 'im_info/list_unread_infos'
-
   root :to => 'sessions#new'
 
   get 'sessions/new'

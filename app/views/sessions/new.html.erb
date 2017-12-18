@@ -1,16 +1,28 @@
-<h1>登录</h1>
+<h3>project one</h3>
 <%
   cu = session[:current_user]
-  puts cu
 %>
-<div>Wellcom :
-  <% if cu %>
-      <%= cu['name'] %>
-  <% else %>
-      游客
-  <% end %>
-  !
-</div>
+<table border="0">
+  <tr>
+    <td>
+      <div>Wellcom :
+        <% if cu %>
+            <%= cu['name'] %>
+        <% else %>
+            游客
+        <% end %>
+        !
+      </div>
+    </td>
+    <% if cu %>
+        <td>
+          <div>
+            <img src="<%= cu['head_picture'] %>">
+          </div>
+        </td>
+    <% end %>
+  </tr>
+</table>
 <div style="color: red">
   <%= flash[:error_info] %>
 </div>
@@ -25,7 +37,7 @@
       <%= f.label :password %>
       <%= f.password_field :password %>
     </p>
-    <% if flash[:login_button] %>
+    <% if cu %>
         <p><%= f.button '切换用户' %></p>
     <% else %>
         <p><%= f.button '登录' %></p>

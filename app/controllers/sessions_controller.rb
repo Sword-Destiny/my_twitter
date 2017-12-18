@@ -5,7 +5,6 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(name: user_params[:name]).try(:authenticate, user_params[:password])
     if user
-      flash.now[:login_button] = user['name']
       session[:current_user] = user
       render 'new'
     else

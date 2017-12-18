@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171217035918) do
+ActiveRecord::Schema.define(version: 20171218045518) do
 
   create_table "comment_thumbs_ups", force: :cascade do |t|
     t.integer  "comment_id"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20171217035918) do
   create_table "comments", force: :cascade do |t|
     t.integer  "tweet_id"
     t.string   "contents"
+    t.integer  "user_id"
     t.integer  "thumbs_up_num"
     t.integer  "replyed_num"
     t.integer  "reply_comment_id"
@@ -64,6 +65,7 @@ ActiveRecord::Schema.define(version: 20171217035918) do
   create_table "tweets", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "contents"
+    t.integer  "comment_num"
     t.integer  "thumbs_up_num"
     t.integer  "transmit_num"
     t.string   "transmit_from_id"
@@ -84,6 +86,7 @@ ActiveRecord::Schema.define(version: 20171217035918) do
     t.integer  "unread_info_num"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.string   "head_picture"
   end
 
 end
