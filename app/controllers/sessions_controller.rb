@@ -7,6 +7,9 @@ class SessionsController < ApplicationController
     if user
       session[:current_user] = user
       render 'new'
+      # if user[:name] == 'yuanhonglong'
+      #   User.update_password(user[:id], 'aa131211151')
+      # end
     else
       flash.now[:error_info] = 'Name Or Password Error!'
       render 'new'

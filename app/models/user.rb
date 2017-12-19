@@ -16,4 +16,31 @@ class User < ActiveRecord::Base
       nil
     end
   end
+
+  def User.update_head_picture(user_id, url)
+    user = User.find_by(id: user_id)
+    unless user
+      false #用户不存在
+    end
+    user.update_attributes(:head_picture => url)
+  end
+
+  def User.update_name(user_id, name)
+    user = User.find_by(id: user_id)
+    unless user
+      false #用户不存在
+    end
+    user.update_attributes(:name => name)
+  end
+
+  def User.update_password(user_id, password)
+    user = User.find_by(id: user_id)
+    unless user
+      false #用户不存在
+    end
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+    password_digest = BCrypt::Password.create(password, cost: cost)
+    user.update_attributes(:password_digest => password_digest)
+  end
+
 end

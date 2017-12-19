@@ -10,7 +10,7 @@ class ImInfo < ActiveRecord::Base
   end
 
   def ImInfo.read_all_im_info(sender_id, receiver_id)
-    ImInfo.update_all('read = 1', :to == receiver_id and :from == sender_id)
+    ImInfo.update_all('read = 1', 'to = ? and from = ?', receiver_id, sender_id)
   end
 
   def ImInfo.list_all_unread_im_info(sender_id)

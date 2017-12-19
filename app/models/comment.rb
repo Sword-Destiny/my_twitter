@@ -21,7 +21,7 @@ class Comment < ActiveRecord::Base
       # 删除可能会失败
       Comment.delete_all('id = ? or top_comment_id = ?', comment_id, comment_id)
     else
-      false # 评论不存在
+      false #评论不存在
     end
   end
 
@@ -40,10 +40,8 @@ class Comment < ActiveRecord::Base
         comment[:reply_comment_id] = replyed_comment_id
         comment[:user_id] = user_id
         if comment.save
-          replyed_comment[:replyed_num] += 1
-          tweet[:comment_num] += 1
-          replyed_comment.update
-          tweet.update
+          replyed_comment.update_attributes(:replyed_num => replyed_comment[:replyed_num] + 1)
+          tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
         else
           nil #保存comment失败
         end
@@ -60,12 +58,9 @@ class Comment < ActiveRecord::Base
         comment[:reply_comment_id] = replyed_comment_id
         comment[:user_id] = user_id
         if comment.save
-          replyed_comment[:replyed_num] += 1
-          top_comment[:replyed_num] += 1
-          tweet[:comment_num] += 1
-          top_comment.update
-          replyed_comment.update
-          tweet.update
+          replyed_comment.update_attributes(:replyed_num => replyed_comment[:replyed_num] + 1)
+          top_comment.update_attributes(:replyed_num => top_comment[:replyed_num] + 1)
+          tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
         else
           nil #保存comment失败
         end
@@ -77,6 +72,10 @@ class Comment < ActiveRecord::Base
 
   # 发布comment
   def Comment.post_comment(contents, user_id, tweet_id)
+    tweet = Tweet.find_by(id: tweet_id)
+    unless tweet
+      nil # tweet不存在
+    end
     comment = Comment.new
     comment[:tweet_id] = tweet_id
     comment[:contents] = contents
@@ -86,7 +85,7 @@ class Comment < ActiveRecord::Base
     comment[:reply_comment_id] = -1
     comment[:user_id] = user_id
     if comment.save
-      comment
+      tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
     else
       nil #保存comment失败
     end
