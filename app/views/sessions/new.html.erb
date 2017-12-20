@@ -54,20 +54,52 @@
 <div id="tweets">
   <%
     if cu
-      tweets = Tweet.list_tweets(cu['id'])
+      tweets_list = Tweet.list_tweets(cu['id'])
     else
-      tweets = Tweet.list_tweets(-1)
+      tweets_list = Tweet.list_tweets(-1)
     end
 
-    tweets.each do |tweet|
+    tweets_list.each do |it|
   %>
-      <div id=" <%= tweet[:id] %> ">
-        <%= raw tweet[:contents] %>
+      <p><%= it[:username] %> 发表:</p>
+      <p>转发自:<%= it[:tweet][:transmit_from_id] %></p>
+      <div id=" <%= it[:tweet][:id] %> ">
+        <%= raw it[:tweet][:contents] %>
       </div>
-      <p>post user_id:<%= tweet[:user_id] %></p>
-      <p>thumbs up num:<%= tweet[:thumbs_up_num] %></p>
-      <p>transmit num:<%= tweet[:transmit_num] %></p>
-      <p>transmit from id:<%= tweet[:transmit_from_id] %></p>
+      <p>点赞数:<%= it[:tweet][:thumbs_up_num] %> 评论数:<%= it[:tweet][:comment_num] %></p>
+      <p>转发数:<%= it[:tweet][:transmit_num] %></p>
+      <%= form_for :session, url: :sessions_post_comment do |f| %>
+          <%= kindeditor_tag :comment_content, '', :simple_mode => true %>
+          <p>
+            <%= f.hidden_field :tweet_id, :value => it[:tweet][:id] %>
+          </p>
+          <p><%= f.button '评论' %></p>
+      <% end %>
+      <%
+        comments_list = Comment.list_comments(it[:tweet][:id])
+        comments_list.each do |item|
+      %>
+          <div id="<%= item[:top_comment][:id] %>">
+            <p>----<%= raw item[:username] %> 评论:</p>
+            <div>----<%= raw item[:top_comment][:contents] %></div>
+            <p>----点赞数:<%= item[:top_comment][:thumbs_up_num] %> 回复数:<%= item[:top_comment][:replyed_num] %></p>
+          </div>
+          <%
+            item[:elements].each do |element|
+          %>
+              <div id="<%= element[:comment][:id] %>">
+                <p>--------<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> 评论:</p>
+                <div>--------<%= raw element[:comment][:contents] %></div>
+                <p>--------点赞数:<%= element[:comment][:thumbs_up_num] %> 回复数:<%= element[:comment][:replyed_num] %></p>
+              </div>
+          <%
+            end
+          %>
+          <br/>
+      <%
+        end
+      %>
+      <br/>
   <%
     end
 

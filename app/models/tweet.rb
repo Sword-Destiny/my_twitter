@@ -10,7 +10,12 @@ class Tweet < ActiveRecord::Base
       user_tweets.reverse!
       recommend_tweets = Tweet.get_recommend_tweets(user_id)
       tweets = user_tweets[0...8] + recommend_tweets
-      tweets
+      tweets_list = []
+      tweets.each do |tweet|
+        user = User.find_by(id: tweet[:user_id])
+        tweets_list.push({:username => user[:name], :tweet => tweet})
+      end
+      tweets_list
     else
       Tweet.get_recommend_tweets(user_id)
     end

@@ -33,6 +33,23 @@ class SessionsController < ApplicationController
     end
   end
 
+  def post_comment
+    user = session[:current_user]
+    if user == nil
+      flash.now[:error_info] = sprintf('Please log in fitst!')
+      render 'new' # TODO 改成ajax
+      nil
+    else
+      t = Comment.post_comment(params[:comment_content], user['id'], params[:session][:tweet_id])
+      if t
+        render 'new' # TODO 改成ajax
+        t
+      else
+        nil
+      end
+    end
+  end
+
   private
   def user_params
     params.require(:session).permit(:name, :password)

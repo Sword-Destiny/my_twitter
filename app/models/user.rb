@@ -43,4 +43,12 @@ class User < ActiveRecord::Base
     user.update_attributes(:password_digest => password_digest)
   end
 
+  def User.gen_tags_by_tweet(user_id)
+    # TODO
+  end
+
+  def User.gen_tags_by_comments(user_id)
+    # TODO
+  end
+
 end

@@ -1,17 +1,35 @@
 class Comment < ActiveRecord::Base
 
   # 是否顶级评论(评论分为两级)
-  def is_top_comment
-    if :top_comment_id == -1
-      true
-    else
-      false
-    end
+  def Comment.is_top_comment(comment)
+    comment[:top_comment_id] == -1
   end
 
   # 获取所有评论
   def Comment.list_comments(tweet_id)
-    Comment.where('tweet_id = ?', tweet_id)
+    comments = Comment.where('tweet_id = ?', tweet_id)
+    users = User.where('id in (select user_id from  comments where tweet_id = ?)', tweet_id)
+    comments_list = []
+    comments.each do |comment|
+      if is_top_comment(comment)
+        user = users.find_by(id:comment[:user_id])
+        comments_list.push({:top_comment_id => comment[:id], :username => user[:name], :top_comment => comment, :elements => []})
+      end
+    end
+
+    comments.each do |c|
+      comments_list.each do |item|
+        if item[:top_comment_id] == c[:top_comment_id]
+          reply_comment = comments.find_by(id: c[:reply_comment_id])
+          reply_user = users.find_by(id: reply_comment[:user_id])
+          user = users.find_by(id: c[:user_id])
+          item[:elements].push({:username => user[:name], :reply_username => reply_user[:name], :comment => c})
+          break
+        end
+      end
+    end
+
+    comments_list
   end
 
   # 删除评论
@@ -31,7 +49,7 @@ class Comment < ActiveRecord::Base
     tweet = Tweet.find_by(id: tweet_id)
     if replyed_comment and tweet
       comment = Comment.new
-      if replyed_comment.is_top_comment
+      if is_top_comment(replyed_comment)
         comment[:tweet_id] = tweet_id
         comment[:contents] = contents
         comment[:thumbs_up_num] = 0
