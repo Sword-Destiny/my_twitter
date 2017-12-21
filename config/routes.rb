@@ -1,5 +1,25 @@
 Rails.application.routes.draw do
 
+  post 'personal_homepage/new'
+
+  post 'personal_homepage/update_head_picture'
+
+  post 'personal_homepage/send_im_info'
+
+  post 'personal_homepage/read_im_info'
+
+  post 'personal_homepage/add_tag'
+
+  post 'personal_homepage/delete_tag'
+
+  post 'personal_homepage/update_name'
+
+  post 'personal_homepage/update_password'
+
+  post 'personal_homepage/follow'
+
+  post 'personal_homepage/unfollow'
+
   root :to => 'sessions#new'
 
   get 'sessions/new'
