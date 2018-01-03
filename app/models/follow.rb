@@ -13,6 +13,14 @@ class Follow < ActiveRecord::Base
     end
   end
 
+  def Follow.get_follow(user_id)
+    User.where('id in (select user_id from follows where follower_id = ?)', user_id)
+  end
+
+  def Follow.get_fans(user_id)
+    User.where('id in (select follower_id from follows where user_id = ?)', user_id)
+  end
+
   def Follow.delete_follow(user_id, follower_id)
     Follow.delete_all('user_id = ? and follower_id = ?', user_id, follower_id)
   end

@@ -43,6 +43,10 @@ class User < ActiveRecord::Base
     user.update_attributes(:password_digest => password_digest)
   end
 
+  def User.get_user(user_id)
+    User.find_by(id: user_id)
+  end
+
   def User.search_user(keyword)
     User.where('id = ? or name like %?%', keyword, keyword)
   end

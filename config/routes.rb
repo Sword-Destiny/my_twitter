@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  post 'personal_homepage/new'
+  get 'personal_homepage/new'
 
   post 'personal_homepage/update_head_picture'
 
@@ -11,8 +11,6 @@ Rails.application.routes.draw do
   post 'personal_homepage/add_tag'
 
   post 'personal_homepage/delete_tag'
-
-  post 'personal_homepage/update_name'
 
   post 'personal_homepage/update_password'
 
@@ -88,4 +86,5 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  match '/personal_homepage/update_name', to: 'personal_homepage#update_name', via:'get'
 end
