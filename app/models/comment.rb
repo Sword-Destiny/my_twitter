@@ -12,7 +12,7 @@ class Comment < ActiveRecord::Base
     comments_list = []
     comments.each do |comment|
       if is_top_comment(comment)
-        user = users.find_by(id:comment[:user_id])
+        user = users.find_by(id: comment[:user_id])
         comments_list.push({:top_comment_id => comment[:id], :username => user[:name], :top_comment => comment, :elements => []})
       end
     end
@@ -85,6 +85,16 @@ class Comment < ActiveRecord::Base
       end
     else
       nil #原comment或者原tweet已被删除
+    end
+  end
+
+  # 搜索comment
+  def Comment.search_comment(user_id, keyword)
+    if user_id>=0
+      # 搜索自己的
+      Comment.where('id = ? and contents like %?%', user_id, keyword)
+    else
+      Comment.where('contents like %?%', keyword)
     end
   end
 
