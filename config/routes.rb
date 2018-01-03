@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  post 'personal_homepage/new'
+  get 'personal_homepage/new'
 
   post 'personal_homepage/update_head_picture'
 

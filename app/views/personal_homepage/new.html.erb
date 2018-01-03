@@ -1,7 +1,56 @@
 <h3>PersonalHomepage</h3>
 <%
+  @home_user_id = params[:home_user_id]
+  @home_user = User.get_user(id: params[:home_user_id])
   cu = session[:current_user]
+  follows = Follow.get_follow(@home_user_id)
+  fans = Follow.get_fans(@home_user_id)
 %>
 <div>
-  <%=raw cu['name']  %>
+  <p>用户:<%= raw @home_user[:name] %></p>
+  <%= form_for :personal_homepage, url: :personal_homepage_update_name do |f| %>
+      <p>
+        <%= f.label :newname %>
+        <%= f.text_field :newname %>
+      </p>
+      <p>
+        <%= f.button '修改用户名' %>
+      </p>
+  <% end %>
+  <p>I D:<%= raw @home_user[:id] %></p>
+  <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
+    <img src="<%= @home_user[:head_picture] %>">
+  </a>
+</div>
+<h4>他(她)的关注:</h4>
+<div>
+  <%
+    follows.each do |u|
+  %>
+      <div id="follow<%= u[:id] %>">
+        <p>用户:<%= u[:name] %></p>
+        <p>I D:<%= u[:id] %></p>
+        <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
+          <img src="<%= raw u[:head_picture] %>">
+        </a>
+      </div>
+  <%
+    end
+  %>
+</div>
+<h4>他(她)的粉丝</h4>
+<div>
+  <%
+    fans.each do |u|
+  %>
+      <div id="follow<%= u[:id] %>">
+        <p>用户:<%= u[:name] %></p>
+        <p>I D:<%= u[:id] %></p>
+        <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
+          <img src="<%= raw u[:head_picture] %>">
+        </a>
+      </div>
+  <%
+    end
+  %>
 </div>

@@ -17,7 +17,9 @@
     <% if cu %>
         <td>
           <div>
-            <img src="<%= cu['head_picture'] %>">
+            <a href="/personal_homepage/new?home_user_id=<%= cu['id'] %>">
+              <img src="<%= cu['head_picture'] %>">
+            </a>
           </div>
         </td>
     <% end %>

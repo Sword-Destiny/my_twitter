@@ -1,7 +1,5 @@
 class PersonalHomepageController < ApplicationController
   def new
-    @home_user_id = params[:session][:home_user_id]
-    @user = params[:current_user] #使用 ['attr'] 而非 [:attr]
   end
 
   def update_head_picture
@@ -20,6 +18,15 @@ class PersonalHomepageController < ApplicationController
   end
 
   def update_name
+    newname = params[:personal_homepage][:newname]
+    user_id = session[:current_user]['id']
+    if User.update_name(user_id, newname)
+      session[:current_user]['name']=newname
+      params[:home_user_id]=user_id
+      render 'new'
+    else
+      false
+    end
   end
 
   def update_password
@@ -30,4 +37,5 @@ class PersonalHomepageController < ApplicationController
 
   def unfollow
   end
+
 end
