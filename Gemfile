@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
-
+# rmagick
+gem 'mini_magick'
 # Use KindEditor
 gem 'rails_kindeditor'
 # Use ActiveModel has_secure_password

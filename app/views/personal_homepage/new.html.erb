@@ -8,12 +8,20 @@
 %>
 <div>
   <div id="username">用户:<%= raw @home_user[:name] %></div>
-  <input type="text" placeholder="New Name" id="newname">
-  <button type="button" id="update_name_btn">修改名字</button>
+  <% if cu['id'].to_s == @home_user_id %>
+      <input type="text" placeholder="New Name" id="newname">
+      <button type="button" id="update_name_btn">修改名字</button>
+  <% end %>
   <p>I D:<%= raw @home_user[:id] %></p>
   <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
-    <img src="<%= @home_user[:head_picture] %>">
+    <img id="home_user_head_picture" src="<%= @home_user[:head_picture] %>">
   </a>
+  <% if cu['id'].to_s == @home_user_id %>
+      <form action="/personal_homepage/update_head_picture" method="post" id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="img_upload" name="img_upload" accept=".jpg,.gif,.png,.jpeg">
+        <button type="button" id="update_head_picture_btn">修改头像</button>
+      </form>
+  <% end %>
 </div>
 <script>
     $(document).ready(function () {
@@ -25,10 +33,37 @@
                 data: {"newname": name},
                 dataType: "json",
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert("修改失败");
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("修改失败");
                 },
                 success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
                     $('#username').html("用户:" + name)
+                }
+            });
+        });
+        $('#update_head_picture_btn').click(function () {
+            var formData = new FormData($("#uploadForm")[0]);
+            $.ajax({
+                url: '/personal_homepage/update_head_picture',
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: "json",
+                success: function (data, textStatus) {
+                    $('#home_user_head_picture').attr("src", data.new_url);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("修改失败");
                 }
             });
         });

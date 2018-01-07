@@ -157,6 +157,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   jbuilder (~> 2.0)
   jquery-rails
+  mini_magick
   rails (= 4.2.6)
   rails_kindeditor
   sass-rails (~> 5.0)

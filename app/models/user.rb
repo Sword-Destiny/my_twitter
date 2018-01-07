@@ -17,12 +17,32 @@ class User < ActiveRecord::Base
     end
   end
 
-  def User.update_head_picture(user_id, url)
+  def User.update_head_picture(user_id, file, name)
+    new_url = process_head_picture(file, user_id, name)
     user = User.find_by(id: user_id)
     unless user
-      false #用户不存在
+      return false, new_url #用户不存在
     end
-    user.update_attributes(:head_picture => url)
+    r = user.update_attributes(:head_picture => new_url)
+    return r, new_url
+  end
+
+  def User.process_head_picture(file, user_id, name)
+    dir_path = "#{Rails.root}/public"
+    file_ext = name[/\.[^.]+$/]
+    store_path = "/heads/#{user_id}-#{Digest::MD5.hexdigest(Time.now.to_s)}#{file_ext}"
+    file_path = "#{dir_path}#{store_path}"
+    File.open(file_path, 'wb+') do |item| # 用二进制对文件进行写入
+      item.write(file)
+    end
+    img = MiniMagick::Image.open(file_path) # 通过路径打开图片
+    w, h = img[:width], img[:height] # 获得图片的宽和高
+    shaved_off = w >= h ? [((w-h)/2).round, 0] : [0, ((h-w)/2).round] # 判断宽高，将长的一部分左右各裁一半
+    img.shave "#{shaved_off[0]}x#{shaved_off[1]}" # shave 裁剪函数
+    img.resize 100 # 图片按100的尺寸缩放
+    img.write(file_path) # 按原路径保存
+
+    return store_path
   end
 
   def User.update_name(user_id, name)
