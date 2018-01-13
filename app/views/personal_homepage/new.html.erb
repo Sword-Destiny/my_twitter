@@ -7,12 +7,15 @@
   fans = Follow.get_fans(@home_user_id)
 %>
 <div>
-  <div id="username">用户:<%= raw @home_user[:name] %></div>
+  <div id="username"><%= raw @home_user[:name] %></div>
   <% if cu['id'].to_s == @home_user_id %>
       <input type="text" placeholder="New Name" id="newname">
       <button type="button" id="update_name_btn">修改名字</button>
   <% end %>
   <p>I D:<%= raw @home_user[:id] %></p>
+  <% if cu['id'].to_s == @home_user_id %>
+      <p>未读消息:<%= @home_user[:unread_info_num] %></p>
+  <% end %>
   <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
     <img id="home_user_head_picture" src="<%= @home_user[:head_picture] %>">
   </a>
@@ -28,9 +31,83 @@
       <input type="text" placeholder="消息" id="send_im">
       <button type="button" id="send_im_btn">发送私信</button>
     </div>
+    <%
+      if Follow.is_follow(@home_user_id, cu['id'])
+    %>
+        <div id="unfollow_div">
+          <div id="unfollow_text"></div>
+          <button type="button" id="unfollow_btn">取关</button>
+        </div>
+    <% else %>
+        <div id="follow_div">
+          <div id="follow_text"></div>
+          <button type="button" id="follow_btn">关注</button>
+        </div>
+    <% end %>
 <% end %>
 <script>
     $(document).ready(function () {
+        function follow() {
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/follow",
+                data: {"follower_id":<%=cu['id'].to_s%>, "user_id":<%=@home_user_id%>},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#follow_text').html("成功");
+                        $('#follow_text').attr("id", "unfollow_text");
+                        $('#follow_btn').html("取关");
+                        $('#follow_btn').attr("id", "unfollow_btn");
+                        $('#unfollow_btn').click(unfollow);
+                        $('#follow_div').attr("id", "unfollow_div");
+                    } else {
+                        $('#follow_text').val(data.info);
+                    }
+                }
+            });
+        }
+        function unfollow() {
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/unfollow",
+                data: {"follower_id":<%=cu['id'].to_s%>, "user_id":<%=@home_user_id%>},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#unfollow_text').html("成功");
+                        $('#unfollow_text').attr("id", "follow_text");
+                        $('#unfollow_btn').html("关注");
+                        $('#unfollow_btn').attr("id", "follow_btn");
+                        $('#follow_btn').click(follow);
+                        $('#unfollow_div').attr("id", "follow_div");
+                    } else {
+                        $('#unfollow_text').val(data.info);
+                    }
+                }
+            });
+        }
+        $('#follow_btn').click(follow);
+        $('#unfollow_btn').click(unfollow);
+
         $('#send_im_btn').click(function () {
             var im = document.getElementById('send_im').value.toString();
             $.ajax({

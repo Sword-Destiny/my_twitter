@@ -96,9 +96,73 @@ class PersonalHomepageController < ApplicationController
   end
 
   def follow
+    user_id = params[:user_id]
+    follower_id = params[:follower_id]
+    user = User.find_by(id: user_id)
+    follower = User.find_by(id: follower_id)
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '被关注者不存在'}.to_json}
+      end
+    end
+    unless follower
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '当前用户不存在'}.to_json}
+      end
+    end
+    if Follow.add_follow(user_id, follower_id)
+      # user.update_attribute(:follower_num, user[:follower_num]+1)
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '关注成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '关注失败'}.to_json}
+      end
+    end
   end
 
   def unfollow
+    user_id = params[:user_id]
+    follower_id = params[:follower_id]
+    user = User.find_by(id: user_id)
+    follower = User.find_by(id: follower_id)
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '被关注者不存在'}.to_json}
+      end
+    end
+    unless follower
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '当前用户不存在'}.to_json}
+      end
+    end
+    if Follow.delete_follow(user_id, follower_id)
+      # user.update_attribute(:follower_num, user[:follower_num]+1)
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '已取消关注'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '取消关注失败'}.to_json}
+      end
+    end
   end
 
 end
