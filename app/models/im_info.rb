@@ -9,11 +9,47 @@ class ImInfo < ActiveRecord::Base
     im_info.save
   end
 
-  def ImInfo.read_all_im_info(sender_id, receiver_id)
-    ImInfo.update_all('read = 1', 'to = ? and from = ?', receiver_id, sender_id)
+  def ImInfo.read_all_im_info(receiver_id)
+    receiver = User.find_by(id: receiver_id)
+    unless receiver
+      false
+    end
+    if ImInfo.where('`to` = ?', receiver_id).update_all('read = 1')
+      receiver.update_attribute(:unread_info_num, 0)
+    end
   end
 
-  def ImInfo.list_all_unread_im_info(sender_id)
-    ImInfo.where('to = ? and read = 0', sender_id)
+  def ImInfo.read_im_info(info_id)
+    info =ImInfo.find_by(id: info_id)
+    unless info
+      false
+    end
+    user = User.find_by(id: info[:to])
+    unless user
+      false
+    end
+    if info.update_attribute(:read, 1)
+      user.update_attribute(:unread_info_num, user[:unread_info_num]-1)
+    end
+  end
+
+  def ImInfo.list_all_unread_im_info(receiver_id)
+    infos = ImInfo.where('`to` = ? and `read` = 0', receiver_id).order('`from`')
+    im_infos = []
+    if infos.length>0
+      from = infos[0][:from]
+      username = User.find_by(id: from)[:name]
+      im_infos.push({:from => from, :username => username, :im => []})
+      infos.each do |info|
+        if info[:from] == from
+          im_infos.last[:im].push(info)
+        else
+          from = info[:from]
+          username = User.find_by(id: from)[:name]
+          im_infos.push({:from => from, :username => username, :im => []})
+        end
+      end
+    end
+    {:num => infos.length, :ims => im_infos}
   end
 end

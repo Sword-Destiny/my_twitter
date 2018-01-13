@@ -14,7 +14,7 @@
   <% end %>
   <p>I D:<%= raw @home_user[:id] %></p>
   <% if cu['id'].to_s == @home_user_id %>
-      <p>未读消息:<%= @home_user[:unread_info_num] %></p>
+      <p>未读消息:<span id="unread_info_num_span"><%= @home_user[:unread_info_num] %></span></p>
   <% end %>
   <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
     <img id="home_user_head_picture" src="<%= @home_user[:head_picture] %>">
@@ -26,7 +26,44 @@
       </form>
   <% end %>
 </div>
-<% unless cu['id'].to_s == @home_user_id %>
+<br>
+<%
+  if cu['id'].to_s == @home_user_id
+    unread_im_infos = ImInfo.list_all_unread_im_info(@home_user_id)
+    im_infos = unread_im_infos[:ims]
+    if unread_im_infos[:num] > 0
+%>
+        <div id="unread_im_infos">
+          <div>未读消息:<span id="unread_num_span"><%= unread_im_infos[:num] %></span> 条
+            <button id="read_all_btn">全部标为已读</button>
+            <div id="read_all_text"></div>
+          </div>
+          <%
+            im_infos.each do |im_info|
+          %>
+              <p>from:<%= im_info[:username] %></p>
+              <%
+                im_info[:im].each do |info|
+              %>
+                  <div id="btn<%= info[:id] %>">
+                    <%= raw info[:info] %>
+                    <button id="read_im_info_btn_<%= info[:id] %>" class="read_im_info_btn">标为已读</button>
+                    <div id="read_im_info_text_<%= info[:id] %>" class="read_im_info_text"></div>
+                  </div>
+              <%
+                end
+              %>
+          <%
+            end
+          %>
+        </div>
+    <%
+      end
+    %>
+<%
+  end
+  unless cu['id'].to_s == @home_user_id
+%>
     <div id="send_im_info">
       <input type="text" placeholder="消息" id="send_im">
       <button type="button" id="send_im_btn">发送私信</button>
@@ -47,6 +84,66 @@
 <% end %>
 <script>
     $(document).ready(function () {
+
+        $('#read_all_btn').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/read_im_info",
+                data: {"read_num": "all", "receiver_id": <%=@home_user_id%>},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#unread_num_span').html("0");
+                        $('#unread_info_num_span').html("0");
+                        document.getElementById("read_all_btn").disabled = true;
+                        $('#read_all_text').html(data.info);
+                        $('.read_im_info_text').html("已读");
+                        var btns = document.getElementsByClassName("read_im_info_btn");
+                        for (var i = 0; i < btns.length; i++) {
+                            btns[i].disabled = true;
+                        }
+                    } else {
+                        $('#read_all_text').html(data.info);
+                    }
+                }
+            });
+        });
+        $('.read_im_info_btn').click(function (param) {
+            var id = Number(param.target.id.substr(17));
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/read_im_info",
+                data: {"read_num": "one", "info_id": id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        document.getElementById("read_im_info_btn_" + id).disabled = true;
+                        document.getElementById("read_im_info_text_" + id).innerHTML = data.info;
+                    } else {
+                        document.getElementById("read_im_info_text_" + id).innerHTML = data.info;
+                    }
+                }
+            });
+        });
+
         function follow() {
             $.ajax({
                 type: "POST",
@@ -76,6 +173,7 @@
                 }
             });
         }
+
         function unfollow() {
             $.ajax({
                 type: "POST",
@@ -105,6 +203,7 @@
                 }
             });
         }
+
         $('#follow_btn').click(follow);
         $('#unfollow_btn').click(unfollow);
 

@@ -61,6 +61,47 @@ class PersonalHomepageController < ApplicationController
   end
 
   def read_im_info
+    if params[:read_num] == 'one'
+      read_one_im_info
+    else
+      read_all_im_info
+    end
+  end
+
+  def read_one_im_info
+    info_id = params[:info_id]
+    if ImInfo.read_im_info(info_id)
+      session[:current_user]['unread_info_num']-=1
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '已读'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '失败'}.to_json}
+      end
+    end
+  end
+
+  def read_all_im_info
+    receiver_id = params[:receiver_id]
+    if ImInfo.read_all_im_info(receiver_id)
+      session[:current_user]['unread_info_num']=0
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '全部已读'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '失败'}.to_json}
+      end
+    end
   end
 
   def add_tag
