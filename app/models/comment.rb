@@ -92,7 +92,7 @@ class Comment < ActiveRecord::Base
   def Comment.search_comment(user_id, keyword)
     if user_id>=0
       # 搜索自己的
-      Comment.where('id = ? and contents like %?%', user_id, keyword)
+      Comment.where('id = ? and contents like "%?%"', user_id, keyword)
     else
       Comment.where('contents like %?%', keyword)
     end

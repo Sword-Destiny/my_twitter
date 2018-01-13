@@ -23,8 +23,40 @@
       </form>
   <% end %>
 </div>
+<% unless cu['id'].to_s == @home_user_id %>
+    <div id="send_im_info">
+      <input type="text" placeholder="消息" id="send_im">
+      <button type="button" id="send_im_btn">发送私信</button>
+    </div>
+<% end %>
 <script>
     $(document).ready(function () {
+        $('#send_im_btn').click(function () {
+            var im = document.getElementById('send_im').value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/send_im_info",
+                data: {"sender_id":<%=cu['id'].to_s%>, "receiver_id":<%=@home_user_id%>, "im": im},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#send_im').val("");
+                        $('#send_im').attr("placeholder", data.info);
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        });
         $('#update_name_btn').click(function () {
             var name = document.getElementById('newname').value.toString();
             $.ajax({

@@ -25,6 +25,39 @@ class PersonalHomepageController < ApplicationController
   end
 
   def send_im_info
+    s_id = params[:sender_id]
+    r_id = params[:receiver_id]
+    receiver = User.find_by(id: r_id)
+    sender = User.find_by(id: s_id)
+    unless sender
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '发送者不存在'}.to_json}
+      end
+    end
+    unless receiver
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '接收者不存在'}.to_json}
+      end
+    end
+    im = params[:im]
+    if ImInfo.send_im_info(s_id, r_id, im)
+      receiver.update_attribute(:unread_info_num, receiver[:unread_info_num]+1)
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '发送成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '发送失败'}.to_json}
+      end
+    end
   end
 
   def read_im_info

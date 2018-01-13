@@ -25,7 +25,7 @@ class Tweet < ActiveRecord::Base
   def Tweet.search_tweet(user_id, keyword)
     if user_id>=0
       # 搜索自己的tweet
-      Tweet.where('id = ? and contents like %?%', user_id, keyword)
+      Tweet.where('id = ? and contents like "%?%"', user_id, keyword)
     else
       Tweet.where('contents like %?%', keyword)
     end

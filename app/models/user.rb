@@ -67,8 +67,16 @@ class User < ActiveRecord::Base
     User.find_by(id: user_id)
   end
 
-  def User.search_user(keyword)
-    User.where('id = ? or name like %?%', keyword, keyword)
+  def User.search_user_name_id(keyword)
+    User.where('name like "%?%" or id = ?', keyword, keyword)
+  end
+
+  def User.search_user_tag(keyword)
+    User.where('id in ( select user_id from user_tags where tag = ? )', keyword)
+  end
+
+  def User.search(keyword)
+    # TODO
   end
 
   def User.gen_tags_by_tweet(user_id)
