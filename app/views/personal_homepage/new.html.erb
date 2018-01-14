@@ -14,6 +14,11 @@
   <% end %>
   <p>I D:<%= raw @home_user[:id] %></p>
   <% if cu['id'].to_s == @home_user_id %>
+      <input type="password" placeholder="New Password" id="password">
+      <input type="password" placeholder="Repeat" id="password_repeat">
+      <button type="button" id="update_password_btn">修改密码</button>
+  <% end %>
+  <% if cu['id'].to_s == @home_user_id %>
       <p>未读消息:<span id="unread_info_num_span"><%= @home_user[:unread_info_num] %></span></p>
   <% end %>
   <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
@@ -84,6 +89,39 @@
 <% end %>
 <script>
     $(document).ready(function () {
+
+        $('#update_password_btn').click(function () {
+            var password = document.getElementById("password").value.toString();
+            var password_repeat = document.getElementById("password_repeat").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/update_password",
+                data: {"password": password, "password_repeat": password_repeat},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#password').val('');
+                        $('#password_repeat').val('');
+                        $('#password').attr("placeholder", data.info);
+                        $('#password_repeat').attr("placeholder", "Repeat");
+                    } else {
+                        $('#password').val('');
+                        $('#password_repeat').val('');
+                        $('#password').attr("placeholder", data.info);
+                        $('#password_repeat').attr("placeholder", "Repeat");
+                    }
+                }
+            });
+        });
 
         $('#read_all_btn').click(function () {
             $.ajax({
@@ -228,7 +266,8 @@
                         $('#send_im').val("");
                         $('#send_im').attr("placeholder", data.info);
                     } else {
-                        alert(data.info);
+                        $('#send_im').val("");
+                        $('#send_im').attr("placeholder", data.info);
                     }
                 }
             });

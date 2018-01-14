@@ -25,16 +25,26 @@ class PersonalHomepageController < ApplicationController
   end
 
   def send_im_info
+    im = params[:im]
     s_id = params[:sender_id]
     r_id = params[:receiver_id]
     receiver = User.find_by(id: r_id)
     sender = User.find_by(id: s_id)
+    if im == nil or im == ''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '不能发送空消息'}.to_json}
+      end
+      return
+    end
     unless sender
       respond_to do |format|
         format.js
         format.html
         format.json {render :json => {:status => 'error', :info => '发送者不存在'}.to_json}
       end
+      return
     end
     unless receiver
       respond_to do |format|
@@ -42,8 +52,8 @@ class PersonalHomepageController < ApplicationController
         format.html
         format.json {render :json => {:status => 'error', :info => '接收者不存在'}.to_json}
       end
+      return
     end
-    im = params[:im]
     if ImInfo.send_im_info(s_id, r_id, im)
       receiver.update_attribute(:unread_info_num, receiver[:unread_info_num]+1)
       respond_to do |format|
@@ -114,6 +124,9 @@ class PersonalHomepageController < ApplicationController
     oldname = session[:current_user]['name']
     newname = params[:newname]
     user_id = session[:current_user]['id']
+    if newname == nil or newname==''
+      # TODO
+    end
     r = User.update_name(user_id, newname)
     if r
       session[:current_user]['name']=newname
@@ -134,6 +147,39 @@ class PersonalHomepageController < ApplicationController
   end
 
   def update_password
+    password = params[:password]
+    password_repeat = params[:password_repeat]
+    if password ==nil or password ==''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '密码不能为空'}.to_json}
+      end
+      return
+    end
+    unless password == password_repeat
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '密码不一致'}.to_json}
+      end
+      return
+    end
+    user = User.find_by(id: session[:current_user]['id'])
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '用户不存在'}.to_json}
+      end
+      return
+    end
+    User.update_password(user, password)
+    respond_to do |format|
+      format.js
+      format.html
+      format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+    end
   end
 
   def follow
@@ -147,6 +193,7 @@ class PersonalHomepageController < ApplicationController
         format.html
         format.json {render :json => {:status => 'error', :info => '被关注者不存在'}.to_json}
       end
+      return
     end
     unless follower
       respond_to do |format|
@@ -154,6 +201,7 @@ class PersonalHomepageController < ApplicationController
         format.html
         format.json {render :json => {:status => 'error', :info => '当前用户不存在'}.to_json}
       end
+      return
     end
     if Follow.add_follow(user_id, follower_id)
       # user.update_attribute(:follower_num, user[:follower_num]+1)
@@ -182,6 +230,7 @@ class PersonalHomepageController < ApplicationController
         format.html
         format.json {render :json => {:status => 'error', :info => '被关注者不存在'}.to_json}
       end
+      return
     end
     unless follower
       respond_to do |format|
@@ -189,6 +238,7 @@ class PersonalHomepageController < ApplicationController
         format.html
         format.json {render :json => {:status => 'error', :info => '当前用户不存在'}.to_json}
       end
+      return
     end
     if Follow.delete_follow(user_id, follower_id)
       # user.update_attribute(:follower_num, user[:follower_num]+1)

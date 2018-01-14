@@ -53,11 +53,7 @@ class User < ActiveRecord::Base
     user.update_attributes(:name => name)
   end
 
-  def User.update_password(user_id, password)
-    user = User.find_by(id: user_id)
-    unless user
-      false #用户不存在
-    end
+  def User.update_password(user, password)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
     password_digest = BCrypt::Password.create(password, cost: cost)
     user.update_attributes(:password_digest => password_digest)
