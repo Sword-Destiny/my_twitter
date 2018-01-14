@@ -3,55 +3,240 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by(name: user_params[:name]).try(:authenticate, user_params[:password])
+    password = params[:password]
+    name = params[:name]
+    if name ==nil or name ==''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '名字不能为空'}.to_json}
+      end
+      return
+    end
+    if password ==nil or password ==''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '密码不能为空'}.to_json}
+      end
+      return
+    end
+    user = User.find_by(name: name).try(:authenticate, password)
     if user
       session[:current_user] = user
-      render 'new'
-      # if user[:name] == 'yuanhonglong'
-      #   User.update_password(user[:id], 'aa131211151')
-      # end
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+      end
     else
-      flash.now[:error_info] = 'Name Or Password Error!'
-      render 'new'
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '用户名或者密码错误'}.to_json}
+      end
     end
   end
 
   def post_tweet
+    if params[:content] == nil or params[:content] == ''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '文本内容为空'}.to_json}
+      end
+      return
+    end
     user = session[:current_user]
     if user == nil
-      flash.now[:error_info] = sprintf('Please log in fitst!')
-      render 'new' # TODO 改成ajax
-      nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
     else
       t = Tweet.add_tweet(user['id'], params[:content])
       if t
-        render 'new' # TODO 改成ajax
-        t
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+        end
       else
-        nil
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '失败'}.to_json}
+        end
       end
     end
   end
 
   def post_comment
+    tweet_id = params[:tweet_id]
+    comment = params[:comment]
+    if comment ==nil or comment ==''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '评论为空'}.to_json}
+      end
+      return
+    end
     user = session[:current_user]
+    tweet = Tweet.find_by(id: tweet_id)
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
     if user == nil
-      flash.now[:error_info] = sprintf('Please log in fitst!')
-      render 'new' # TODO 改成ajax
-      nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    comment = Comment.post_comment(comment, user['id'], tweet)
+    if comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :id => comment[:id], :tweet_id => tweet[:id], :num => tweet[:comment_num]}.to_json}
+      end
     else
-      t = Comment.post_comment(params[:comment_content], user['id'], params[:session][:tweet_id])
-      if t
-        render 'new' # TODO 改成ajax
-        t
-      else
-        nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '保存comment失败'}.to_json}
       end
     end
   end
 
-  private
-  def user_params
-    params.require(:session).permit(:name, :password)
+  def reply_top_comment
+    tweet_id = params[:tweet_id]
+    comment = params[:comment]
+    top_comment_id = params[:top_comment_id]
+    if comment ==nil or comment ==''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '评论为空'}.to_json}
+      end
+      return
+    end
+    user = session[:current_user]
+    tweet = Tweet.find_by(id: tweet_id)
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    top_comment = Comment.find_by(id: top_comment_id)
+    unless top_comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
+      end
+      return
+    end
+    comment = Comment.reply_top_comment(comment, user['id'], tweet, top_comment)
+    if comment
+      reply_user = User.find_by(id: top_comment[:user_id])
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :reply_user_name => reply_user[:name], :top_comment_reply_num => top_comment[:replyed_num], :new_comment_id => comment[:id], :tweet_comment_num => tweet[:comment_num]}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '保存comment失败'}.to_json}
+      end
+    end
   end
+
+  def reply_comment
+    tweet_id = params[:tweet_id]
+    comment = params[:comment]
+    top_comment_id = params[:top_comment_id]
+    reply_comment_id = params[:reply_comment_id]
+    if comment ==nil or comment ==''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '评论为空'}.to_json}
+      end
+      return
+    end
+    user = session[:current_user]
+    tweet = Tweet.find_by(id: tweet_id)
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    top_comment = Comment.find_by(id: top_comment_id)
+    unless top_comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
+      end
+      return
+    end
+    reply_comment = Comment.find_by(id: reply_comment_id)
+    unless reply_comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
+      end
+      return
+    end
+    comment = Comment.reply_comment(comment, user['id'], tweet, top_comment, reply_comment)
+    if comment
+      reply_user = User.find_by(id: reply_comment[:user_id])
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :reply_user_name => reply_user[:name], :reply_comment_reply_num => reply_comment[:replyed_num], :top_comment_reply_num => top_comment[:replyed_num], :new_comment_id => comment[:id], :tweet_comment_num => tweet[:comment_num]}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '保存comment失败'}.to_json}
+      end
+    end
+  end
+
 end

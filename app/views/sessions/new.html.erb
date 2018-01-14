@@ -25,34 +25,17 @@
     <% end %>
   </tr>
 </table>
-<div style="color: red">
-  <%= flash[:error_info] %>
+
+<input type="text" id="name" class="name" placeholder="Name">
+<input type="password" placeholder="Password" class="password" id="password">
+<button type="button" id="login" class="reister">登录</button>
+<a href="/applicants/new">注册</a>
+<div>
+  <textarea id="content"></textarea>
 </div>
-<!-- 改成ajax，error时只弹出信息，不刷新页面 -->
-<%= form_for :session, url: :sessions_create do |f| %>
-    <p>
-      <%= f.label :name %>
-      <%= f.text_field :name %>
-    </p>
-
-    <p>
-      <%= f.label :password %>
-      <%= f.password_field :password %>
-    </p>
-    <% if cu %>
-        <p><%= f.button '切换用户' %></p>
-    <% else %>
-        <p><%= f.button '登录' %></p>
-    <% end %>
-
-<% end %>
-
-<!-- 改成ajax，只刷新tweets -->
-<%= form_for :session, url: :sessions_post_tweet do |f| %>
-    <%= kindeditor_tag :content, '', :simple_mode => true %>
-    <p><%= f.button '发布' %></p>
-<% end %>
-
+<p>
+  <button type="button" id='post_tweet_btn' class='post_tweet_btn'>发布</button>
+</p>
 <div id="tweets">
   <%
     if cu
@@ -63,47 +46,324 @@
 
     tweets_list.each do |it|
   %>
-      <p><%= it[:username] %> 发表:</p>
-      <p>转发自:<%= it[:tweet][:transmit_from_id] %></p>
-      <div id=" <%= it[:tweet][:id] %> ">
-        <%= raw it[:tweet][:contents] %>
+      <div id="tweet_<%= it[:tweet][:id] %>">
+        <p><%= it[:username] %> 发表:</p>
+        <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+            <p>转发自:<%= it[:tweet][:transmit_name] %></p>
+        <% end %>
+        <div id=" <%= it[:tweet][:id] %> ">
+          <%= raw it[:tweet][:contents] %>
+        </div>
+        <p>点赞数:<%= it[:tweet][:thumbs_up_num] %></p>
+        <p id="comment_num_<%= it[:tweet][:id] %>">评论数:<%= it[:tweet][:comment_num] %></p>
+        <p>转发数:<%= it[:tweet][:transmit_num] %></p>
+        <%
+          comments_list = Comment.list_comments(it[:tweet][:id])
+          comments_list.each do |item|
+        %>
+            <div id="div_comment_<%= item[:top_comment][:id] %>">
+              <p>----<%= raw item[:username] %> 评论:</p>
+              <div>----<%= raw item[:top_comment][:contents] %></div>
+              <p id="top_comment_thumbsup_num_<%= item[:top_comment][:id] %>">----点赞数:<%= item[:top_comment][:thumbs_up_num] %></p>
+              <p id="top_reply_num_<%= item[:top_comment][:id] %>">----回复数:<%= item[:top_comment][:replyed_num] %></p>
+              <button type="button" id="reply_top_comment_btn_<%= item[:top_comment][:id] %>" class="reply_top_comment_btn">回复</button>
+              <%
+                item[:elements].each do |element|
+              %>
+                  <div id="comment_<%= element[:comment][:id] %>">
+                    <p>--------<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> 评论:</p>
+                    <div>--------<%= raw element[:comment][:contents] %></div>
+                    <p id="comment_thumbsup_num_<%= element[:comment][:id] %>">--------点赞数:<%= element[:comment][:thumbs_up_num] %></p>
+                    <p id="comment_reply_num_<%= element[:comment][:id] %>">--------回复数:<%= element[:comment][:replyed_num] %></p>
+                    <button type="button" id="reply_comment_btn_<%= element[:comment][:id] %>" class="reply_comment_btn">回复</button>
+                  </div>
+              <%
+                end
+              %>
+            </div>
+            <br/>
+        <%
+          end
+        %>
+        <input type="text" id="post_comment_<%= it[:tweet][:id] %>" class="post_comment" placeholder="你的评论">
+        <button type="button" id="post_comment_btn_<%= it[:tweet][:id] %>" class="post_comment_btn">评论</button>
+        <br/>
       </div>
-      <p>点赞数:<%= it[:tweet][:thumbs_up_num] %> 评论数:<%= it[:tweet][:comment_num] %></p>
-      <p>转发数:<%= it[:tweet][:transmit_num] %></p>
-      <%= form_for :session, url: :sessions_post_comment do |f| %>
-          <%= kindeditor_tag :comment_content, '', :simple_mode => true %>
-          <p>
-            <%= f.hidden_field :tweet_id, :value => it[:tweet][:id] %>
-          </p>
-          <p><%= f.button '评论' %></p>
-      <% end %>
-      <%
-        comments_list = Comment.list_comments(it[:tweet][:id])
-        comments_list.each do |item|
-      %>
-          <div id="<%= item[:top_comment][:id] %>">
-            <p>----<%= raw item[:username] %> 评论:</p>
-            <div>----<%= raw item[:top_comment][:contents] %></div>
-            <p>----点赞数:<%= item[:top_comment][:thumbs_up_num] %> 回复数:<%= item[:top_comment][:replyed_num] %></p>
-          </div>
-          <%
-            item[:elements].each do |element|
-          %>
-              <div id="<%= element[:comment][:id] %>">
-                <p>--------<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> 评论:</p>
-                <div>--------<%= raw element[:comment][:contents] %></div>
-                <p>--------点赞数:<%= element[:comment][:thumbs_up_num] %> 回复数:<%= element[:comment][:replyed_num] %></p>
-              </div>
-          <%
-            end
-          %>
-          <br/>
-      <%
-        end
-      %>
-      <br/>
   <%
     end
 
   %>
 </div>
+
+<script>
+    KindEditor.ready(function (K) {
+        window.editor = K.create('#content', {
+            width: 800,
+            height: 300,
+            afterBlur: function () {
+                this.sync();
+            }
+        });
+    });
+    $(document).ready(function () {
+        function sure_top_comment(comment, top, tweet, errorcallback, successcallback) {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/reply_top_comment",
+                data: {"comment": comment, "tweet_id": tweet, "top_comment_id": top},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        successcallback(data);
+                    } else {
+                        errorcallback(data.info);
+                    }
+                }
+            });
+        }
+
+        function sure_comment(comment, reply, top, tweet, errorcallback, successcallback) {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/reply_comment",
+                data: {"comment": comment, "tweet_id": tweet, "top_comment_id": top, "reply_comment_id": reply},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        successcallback(data);
+                    } else {
+                        errorcallback(data.info);
+                    }
+                }
+            });
+        }
+
+        function add_reply_comment(comment, top_comment_id, new_comment_id, reply_user_name) {
+            var top_comment = document.getElementById("div_comment_" + top_comment_id);
+            var div = document.createElement('div');
+            div.id = "comment_" + new_comment_id;
+            div.innerHTML = '<p>--------<%=raw cu ? cu['name']:'' %> 回复 ' + reply_user_name + ' 评论:</p>' +
+                '<div>--------' + comment + '</div>' +
+                '<p id="comment_thumbsup_num_' + new_comment_id + '">--------点赞数:0</p>' +
+                '<p id="comment_reply_num_' + new_comment_id + '">--------回复数:0</p>' +
+                '<button type="button" id="reply_comment_btn_' + new_comment_id + '" class="reply_comment_btn">回复</button>';
+            top_comment.appendChild(div);
+            document.getElementById("reply_comment_btn_" + new_comment_id).onclick = reply_comment;
+        }
+
+        function add_top_cmment(tweet_id, top_comment_id, contents) {
+            var tweet = document.getElementById("tweet_" + tweet_id);
+            var text = document.getElementById("post_comment_" + tweet_id);
+            var div = document.createElement('div');
+            div.id = "div_comment_" + top_comment_id;
+            div.innerHTML = '<p>----<%=raw cu ? cu['name']:'' %> 评论:</p>' +
+                '<div>----' + contents + '</div>' +
+                '<p id="top_comment_thumbsup_num_'+top_comment_id+'">----点赞数:0</p>' +
+                '<p id="top_reply_num_'+top_comment_id+'">----回复数:0</p>' +
+                '<button type="button" id="reply_top_comment_btn_'+top_comment_id+'" class="reply_top_comment_btn">回复</button>';
+            tweet.insertBefore(div,text);
+            document.getElementById("reply_top_comment_btn_" + top_comment_id).onclick = reply_top_comment;
+        }
+
+        function reply_top_comment(param) {
+            var top_comment_id = param.target.parentNode.id.substr(12);
+            var tweet_id = param.target.parentNode.parentNode.id.substr(6);
+            var div = document.getElementById("div_comment_" + top_comment_id);
+            var btn = document.getElementById("reply_top_comment_btn_" + top_comment_id);
+            var input = document.createElement('input');
+            input.id = "input_top_comment_" + top_comment_id;
+            input.setAttribute("class", "input_top_comment");
+            div.insertBefore(input, btn);
+            var sure = document.createElement('button');
+            sure.type = "button";
+            sure.id = "sure_top_comment_" + top_comment_id;
+            sure.setAttribute("class", "sure_top_comment");
+            sure.innerHTML = "确定";
+            div.insertBefore(sure, btn);
+            var cancel = document.createElement('button');
+            cancel.type = "button";
+            cancel.id = "cancel_top_comment_" + top_comment_id;
+            cancel.setAttribute("class", "cancel_top_comment");
+            cancel.innerHTML = "取消";
+            cancel.onclick = function () {
+                div.removeChild(input);
+                div.removeChild(sure);
+                div.removeChild(cancel);
+                btn.hidden = false;
+            };
+            sure.onclick = function () {
+                var comment = input.value.toString();
+                var error = function (info) {
+                    input.value = '';
+                    input.placeholder = info;
+                };
+                var success = function (data) {
+                    div.removeChild(input);
+                    div.removeChild(sure);
+                    div.removeChild(cancel);
+                    btn.hidden = false;
+                    add_reply_comment(comment, top_comment_id, data.new_comment_id, data.reply_user_name);
+                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "----回复数:" + data.top_comment_reply_num;
+                    document.getElementById("comment_num_" + tweet_id).innerHTML = "评论数:" + data.tweet_comment_num;
+                };
+                sure_top_comment(comment, top_comment_id, tweet_id, error, success);
+            };
+            div.insertBefore(cancel, btn);
+            btn.hidden = true;
+        }
+
+        function reply_comment(param) {
+            var comment_id = param.target.parentNode.id.substr(8);
+            var top_comment_id = param.target.parentNode.parentNode.id.substr(12);
+            var tweet_id = param.target.parentNode.parentNode.parentNode.id.substr(6);
+            var div = document.getElementById("comment_" + comment_id);
+            var btn = document.getElementById("reply_comment_btn_" + comment_id);
+            var input = document.createElement('input');
+            input.id = "input_comment_" + comment_id;
+            input.setAttribute("class", "input_comment");
+            div.insertBefore(input, btn);
+            var sure = document.createElement('button');
+            sure.type = "button";
+            sure.id = "sure_comment_" + comment_id;
+            sure.setAttribute("class", "sure_comment");
+            sure.innerHTML = "确定";
+            div.insertBefore(sure, btn);
+            var cancel = document.createElement('button');
+            cancel.type = "button";
+            cancel.id = "cancel_comment_" + comment_id;
+            cancel.setAttribute("class", "cancel_comment");
+            cancel.innerHTML = "取消";
+            cancel.onclick = function () {
+                div.removeChild(input);
+                div.removeChild(sure);
+                div.removeChild(cancel);
+                btn.hidden = false;
+            };
+            sure.onclick = function () {
+                var comment = input.value.toString();
+                var error = function (info) {
+                    input.value = '';
+                    input.placeholder = info;
+                };
+                var success = function (data) {
+                    div.removeChild(input);
+                    div.removeChild(sure);
+                    div.removeChild(cancel);
+                    btn.hidden = false;
+                    add_reply_comment(comment, top_comment_id, data.new_comment_id, data.reply_user_name);
+                    document.getElementById("comment_reply_num_" + comment_id).innerHTML = "----回复数:" + data.reply_comment_reply_num;
+                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "----回复数:" + data.top_comment_reply_num;
+                    document.getElementById("comment_num_" + tweet_id).innerHTML = "评论数:" + data.tweet_comment_num;
+                };
+                sure_comment(comment, comment_id, top_comment_id, tweet_id, error, success);
+            };
+            div.insertBefore(cancel, btn);
+            btn.hidden = true;
+        }
+
+        $('.reply_top_comment_btn').click(reply_top_comment);
+        $('.reply_comment_btn').click(reply_comment);
+
+        $('.post_comment_btn').click(function (param) {
+            var tweet_id = Number(param.target.id.substr(17));
+            var comment = document.getElementById("post_comment_" + tweet_id).value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/post_comment",
+                data: {"comment": comment, "tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        add_top_cmment(data.tweet_id,data.id,comment);
+                        var comment_num = document.getElementById("comment_num_" + tweet_id);
+                        comment_num.innerHTML = "评论数:" + data.num;
+                    } else {
+                        document.getElementById("post_comment_" + tweet_id).setAttribute("value", "");
+                        document.getElementById("post_comment_" + tweet_id).setAttribute("placeholder", data.info);
+                    }
+                }
+            });
+        });
+        $('#post_tweet_btn').click(function () {
+            var content = document.getElementById("content").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/post_tweet",
+                data: {"content": content},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        });
+        $('#login').click(function () {
+            var name = document.getElementById("name").value.toString();
+            var password = document.getElementById("password").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/create",
+                data: {"name": name, "password": password},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        $('#name').val('');
+                        $('#password').val('');
+                        $('#name').attr("placeholder", data.info);
+                        $('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+    });
+</script>

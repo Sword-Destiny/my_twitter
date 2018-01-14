@@ -1,4 +1,5 @@
 <h3>PersonalHomepage</h3>
+<a onclick="window.location.href='/sessions/new'"><u>main page</u></a>
 <%
   @home_user_id = params[:home_user_id]
   @home_user = User.get_user(params[:home_user_id])

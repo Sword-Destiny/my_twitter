@@ -43,48 +43,41 @@ class Comment < ActiveRecord::Base
     end
   end
 
-  # 回复comment
-  def Comment.reply_comment(contents, user_id, tweet_id, replyed_comment_id)
-    replyed_comment = Comment.find_by(id: replyed_comment_id)
-    tweet = Tweet.find_by(id: tweet_id)
-    if replyed_comment and tweet
-      comment = Comment.new
-      if is_top_comment(replyed_comment)
-        comment[:tweet_id] = tweet_id
-        comment[:contents] = contents
-        comment[:thumbs_up_num] = 0
-        comment[:replyed_num] = 0
-        comment[:top_comment_id] = replyed_comment_id
-        comment[:reply_comment_id] = replyed_comment_id
-        comment[:user_id] = user_id
-        if comment.save
-          replyed_comment.update_attributes(:replyed_num => replyed_comment[:replyed_num] + 1)
-          tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
-        else
-          nil #保存comment失败
-        end
-      else
-        top_comment = Comment.find_by(id: replyed_comment[:top_comment_id])
-        unless top_comment
-          nil #原comment已被删除
-        end
-        comment[:tweet_id] = tweet_id
-        comment[:contents] = contents
-        comment[:thumbs_up_num] = 0
-        comment[:replyed_num] = 0
-        comment[:top_comment_id] = replyed_comment[:top_comment_id]
-        comment[:reply_comment_id] = replyed_comment_id
-        comment[:user_id] = user_id
-        if comment.save
-          replyed_comment.update_attributes(:replyed_num => replyed_comment[:replyed_num] + 1)
-          top_comment.update_attributes(:replyed_num => top_comment[:replyed_num] + 1)
-          tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
-        else
-          nil #保存comment失败
-        end
-      end
+  def Comment.reply_top_comment(contents, user_id, tweet, top_comment)
+    comment = Comment.new
+    comment[:tweet_id] = tweet[:id]
+    comment[:contents] = contents
+    comment[:thumbs_up_num] = 0
+    comment[:replyed_num] = 0
+    comment[:top_comment_id] = top_comment[:id]
+    comment[:reply_comment_id] = top_comment[:id]
+    comment[:user_id] = user_id
+    if comment.save
+      top_comment.update_attributes(:replyed_num => top_comment[:replyed_num] + 1)
+      tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
+      comment
     else
-      nil #原comment或者原tweet已被删除
+      nil #保存comment失败
+    end
+  end
+
+  # 回复comment
+  def Comment.reply_comment(contents, user_id, tweet, top_comment, replyed_comment)
+    comment = Comment.new
+    comment[:tweet_id] = tweet[:id]
+    comment[:contents] = contents
+    comment[:thumbs_up_num] = 0
+    comment[:replyed_num] = 0
+    comment[:top_comment_id] = replyed_comment[:top_comment_id]
+    comment[:reply_comment_id] = replyed_comment[:id]
+    comment[:user_id] = user_id
+    if comment.save
+      replyed_comment.update_attributes(:replyed_num => replyed_comment[:replyed_num] + 1)
+      top_comment.update_attributes(:replyed_num => top_comment[:replyed_num] + 1)
+      tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
+      comment
+    else
+      nil #保存comment失败
     end
   end
 
@@ -99,13 +92,9 @@ class Comment < ActiveRecord::Base
   end
 
   # 发布comment
-  def Comment.post_comment(contents, user_id, tweet_id)
-    tweet = Tweet.find_by(id: tweet_id)
-    unless tweet
-      nil # tweet不存在
-    end
+  def Comment.post_comment(contents, user_id, tweet)
     comment = Comment.new
-    comment[:tweet_id] = tweet_id
+    comment[:tweet_id] = tweet[:id]
     comment[:contents] = contents
     comment[:thumbs_up_num] = 0
     comment[:replyed_num] = 0
@@ -114,8 +103,9 @@ class Comment < ActiveRecord::Base
     comment[:user_id] = user_id
     if comment.save
       tweet.update_attributes(:comment_num => tweet[:comment_num] + 1)
+      return comment
     else
-      nil #保存comment失败
+      return nil #保存comment失败
     end
   end
 

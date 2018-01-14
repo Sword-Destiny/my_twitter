@@ -1,8 +1,12 @@
 class User < ActiveRecord::Base
   has_secure_password
 
-  def User.register(user_params)
-    user = User.create(user_params)
+  def User.register(name, password)
+    user = User.new
+    cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+    password_digest = BCrypt::Password.create(password, cost: cost)
+    user[:password_digest]=password_digest
+    user[:name]=name
     user[:unread_info_num] = 0
     user[:head_picture] = '/heads/default.png'
     if user.save

@@ -13,7 +13,12 @@ class Tweet < ActiveRecord::Base
       tweets_list = []
       tweets.each do |tweet|
         user = User.find_by(id: tweet[:user_id])
-        tweets_list.push({:username => user[:name], :tweet => tweet})
+        if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
+          tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => ''})
+        else
+          transmit_name = User.find_by(id: tweet[:transmit_from_id])[:name]
+          tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => transmit_name})
+        end
       end
       tweets_list
     else

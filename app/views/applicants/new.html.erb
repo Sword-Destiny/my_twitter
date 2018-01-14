@@ -1,28 +1,45 @@
 <h1>注册</h1>
 
-<% if @user.errors.any? %>
-    <ul>
-      <% @user.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-      <% end %>
-    </ul>
-<% end %>
 
-<%= form_for @user, url: :applicants_create do |f| %>
-    <p>
-      <%= f.label :name %>
-      <%= f.text_field :name %>
-    </p>
+<input type="text" id="name" class="name" placeholder="Name">
+<input type="password" placeholder="Password" class="password" id="password">
+<input type="password" placeholder="Password Repeat" class="password" id="password_repeat">
+<button type="button" id="register" class="reister">注册</button>
+<a href="/sessions/new">主页面</a>
+<script>
 
-    <p>
-      <%= f.label :password %>
-      <%= f.password_field :password %>
-    </p>
-
-    <p>
-      <%= f.label :password_confirmation %>
-      <%= f.password_field :password_confirmation %>
-    </p>
-
-    <p><%= f.button '提交' %></p>
-<% end %>
+    $(document).ready(function () {
+        $('#register').click(function () {
+            var name = document.getElementById("name").value.toString();
+            var password = document.getElementById("password").value.toString();
+            var password_repeat = document.getElementById("password_repeat").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/applicants/create",
+                data: {"name": name, "password": password, "password_repeat": password_repeat},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        $('#name').val('');
+                        $('#password').val('');
+                        $('#password_repeat').val('');
+                        $('#name').attr("placeholder", data.info);
+                        $('#password').attr("placeholder", "Password");
+                        $('#password_repeat').attr("placeholder", "Password Repeat");
+                    }
+                }
+            });
+        });
+    });
+</script>
