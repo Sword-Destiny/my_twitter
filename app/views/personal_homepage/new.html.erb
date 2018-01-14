@@ -32,63 +32,180 @@
   <% end %>
 </div>
 <br>
-<%
-  if cu['id'].to_s == @home_user_id
-    unread_im_infos = ImInfo.list_all_unread_im_info(@home_user_id)
-    im_infos = unread_im_infos[:ims]
-    if unread_im_infos[:num] > 0
-%>
-        <div id="unread_im_infos">
-          <div>未读消息:<span id="unread_num_span"><%= unread_im_infos[:num] %></span> 条
-            <button id="read_all_btn">全部标为已读</button>
-            <div id="read_all_text"></div>
+<div id="tags">
+  <%
+    if cu['id'].to_s == @home_user_id
+  %>
+      <span>我的标签:</span><br>
+      <%
+        tags = UserTag.list_tags(@home_user_id)
+        tags.each do |tag|
+      %>
+          <div id="tag_div_<%= tag[:id] %>" class="tag_div">
+            <span id="tag_span_<%= tag[:id] %>" class="tag_span"><%= tag[:tag] %></span>
+            <button type="button" id="tag_btn_<%= tag[:id] %>" class="tag_btn">删除</button>
           </div>
-          <%
-            im_infos.each do |im_info|
-          %>
-              <p>from:<%= im_info[:username] %></p>
-              <%
-                im_info[:im].each do |info|
-              %>
-                  <div id="btn<%= info[:id] %>">
-                    <%= raw info[:info] %>
-                    <button id="read_im_info_btn_<%= info[:id] %>" class="read_im_info_btn">标为已读</button>
-                    <div id="read_im_info_text_<%= info[:id] %>" class="read_im_info_text"></div>
-                  </div>
-              <%
-                end
-              %>
-          <%
-            end
-          %>
-        </div>
-    <%
-      end
-    %>
-<%
-  end
-  unless cu['id'].to_s == @home_user_id
-%>
-    <div id="send_im_info">
-      <input type="text" placeholder="消息" id="send_im">
-      <button type="button" id="send_im_btn">发送私信</button>
-    </div>
-    <%
-      if Follow.is_follow(@home_user_id, cu['id'])
-    %>
-        <div id="unfollow_div">
-          <div id="unfollow_text"></div>
-          <button type="button" id="unfollow_btn">取关</button>
-        </div>
-    <% else %>
-        <div id="follow_div">
-          <div id="follow_text"></div>
-          <button type="button" id="follow_btn">关注</button>
-        </div>
-    <% end %>
-<% end %>
+      <%
+        end
+      %>
+      <input type="text" placeholder="新标签" id="newtag">
+      <button type="button" id="add_tag_btn">添加标签</button>
+  <% else %>
+      <span>他(她)的标签:</span><br>
+      <%
+        tags = UserTag.list_tags(@home_user_id)
+        tags.each do |tag|
+      %>
+          <div id="tag_div_<%= tag[:id] %>" class="tag_div">
+            <span id="tag_span_<%= tag[:id] %>" class="tag_span"><%= tag[:tag] %></span>
+          </div>
+      <%
+        end
+      %>
+  <% end %>
+</div>
+<br>
+<div>
+  <%
+    if cu['id'].to_s == @home_user_id
+      unread_im_infos = ImInfo.list_all_unread_im_info(@home_user_id)
+      im_infos = unread_im_infos[:ims]
+      if unread_im_infos[:num] > 0
+  %>
+          <div id="unread_im_infos">
+            <div>未读消息:<span id="unread_num_span"><%= unread_im_infos[:num] %></span> 条
+              <button id="read_all_btn">全部标为已读</button>
+              <div id="read_all_text"></div>
+            </div>
+            <%
+              im_infos.each do |im_info|
+            %>
+                <p>from:<%= im_info[:username] %></p>
+                <%
+                  im_info[:im].each do |info|
+                %>
+                    <div id="btn<%= info[:id] %>">
+                      <%= raw info[:info] %>
+                      <button id="read_im_info_btn_<%= info[:id] %>" class="read_im_info_btn">标为已读</button>
+                      <div id="read_im_info_text_<%= info[:id] %>" class="read_im_info_text"></div>
+                    </div>
+                <%
+                  end
+                %>
+            <%
+              end
+            %>
+          </div>
+      <%
+        end
+      %>
+  <%
+    end
+    unless cu['id'].to_s == @home_user_id
+  %>
+      <div id="send_im_info">
+        <input type="text" placeholder="消息" id="send_im">
+        <button type="button" id="send_im_btn">发送私信</button>
+      </div>
+      <%
+        if Follow.is_follow(@home_user_id, cu['id'])
+      %>
+          <div id="unfollow_div">
+            <div id="unfollow_text"></div>
+            <button type="button" id="unfollow_btn">取关</button>
+          </div>
+      <% else %>
+          <div id="follow_div">
+            <div id="follow_text"></div>
+            <button type="button" id="follow_btn">关注</button>
+          </div>
+      <% end %>
+  <% end %>
+</div>
 <script>
     $(document).ready(function () {
+
+        $('#add_tag_btn').click(function () {
+            var newtag = document.getElementById("newtag").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/add_tag",
+                data: {"newtag": newtag},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#newtag').val('');
+                        $('#newtag').attr("placeholder", data.info);
+                        var newtag_element = document.getElementById("newtag");
+                        var tags = document.getElementById("tags");
+
+                        var subdiv = document.createElement('div');
+                        subdiv.id = "tag_div_" + data.id;
+                        subdiv.setAttribute("class", "tag_div");
+
+                        var span = document.createElement('span');
+                        span.id = "tag_span_" + data.id;
+                        span.setAttribute("class", "tag_span");
+                        span.innerHTML = newtag + " ";
+
+                        var btn = document.createElement('button');
+                        btn.type = "button";
+                        btn.id = "tag_btn_" + data.id;
+                        btn.setAttribute("class", "tag_btn");
+                        btn.innerHTML = "删除";
+                        btn.onclick = delete_tag;
+
+                        subdiv.appendChild(span);
+                        subdiv.appendChild(btn);
+
+                        tags.insertBefore(subdiv, newtag_element);
+
+                    } else {
+                        $('#newtag').val('');
+                        $('#newtag').attr("placeholder", data.info);
+                    }
+                }
+            });
+        });
+
+        function delete_tag(param) {
+            var id = Number(param.target.id.substr(8));
+            $.ajax({
+                type: "POST",
+                url: "/personal_homepage/delete_tag",
+                data: {"id": id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var element = document.getElementById("tag_div_" + id);
+                        var tags = document.getElementById("tags");
+                        tags.removeChild(element);
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+        $('.tag_btn').click(delete_tag);
 
         $('#update_password_btn').click(function () {
             var password = document.getElementById("password").value.toString();

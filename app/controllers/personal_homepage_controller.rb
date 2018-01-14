@@ -115,9 +115,56 @@ class PersonalHomepageController < ApplicationController
   end
 
   def add_tag
+    user = User.find_by(id: session[:current_user]['id'])
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '用户不存在'}.to_json}
+      end
+      return
+    end
+    newtag = params[:newtag]
+    usertag = UserTag.add_user_tag(newtag, user)
+    if usertag
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :id => usertag[:id]}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '添加失败'}.to_json}
+      end
+    end
   end
 
   def delete_tag
+    user = User.find_by(id: session[:current_user]['id'])
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '用户不存在'}.to_json}
+      end
+      return
+    end
+    tag_id = params[:id]
+    if UserTag.delete_user_tag(tag_id,user)
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '删除失败'}.to_json}
+      end
+    end
   end
 
   def update_name

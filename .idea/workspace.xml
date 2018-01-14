@@ -5,9 +5,12 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/development.sqlite3" afterPath="$PROJECT_DIR$/db/development.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/personal_homepage_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/personal_homepage_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user.rb" afterPath="$PROJECT_DIR$/app/models/user.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user_tag.rb" afterPath="$PROJECT_DIR$/app/models/user_tag.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/personal_homepage/add_tag.html.erb" afterPath="$PROJECT_DIR$/app/views/personal_homepage/add_tag.html.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/personal_homepage/delete_tag.html.erb" afterPath="$PROJECT_DIR$/app/views/personal_homepage/delete_tag.html.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/personal_homepage/follow.html.erb" afterPath="$PROJECT_DIR$/app/views/personal_homepage/follow.html.erb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/personal_homepage/new.html.erb" afterPath="$PROJECT_DIR$/app/views/personal_homepage/new.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/personal_homepage/update_password.html.erb" afterPath="$PROJECT_DIR$/app/views/personal_homepage/update_password.html.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/personal_homepage/unfollow.html.erb" afterPath="$PROJECT_DIR$/app/views/personal_homepage/unfollow.html.erb" />
     </list>
     <ignored path="$PROJECT_DIR$/.bundle/" />
     <ignored path="$PROJECT_DIR$/components/" />
@@ -27,7 +30,7 @@
     <SUITE FILE_PATH="coverage/my_twitter@spec__my_twitter.coverage" NAME="spec: my_twitter Coverage Results" MODIFIED="1513743739397" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/my_twitter@test.coverage" NAME="test Coverage Results" MODIFIED="1515380803573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="project_one" />
     <SUITE FILE_PATH="coverage/my_twitter@Development__my_twitter.coverage" NAME="Development: my_twitter Coverage Results" MODIFIED="1514965932565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="project_one" />
-    <SUITE FILE_PATH="coverage/my_twitter@Dev.coverage" NAME="Dev Coverage Results" MODIFIED="1515896458383" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="project_one" />
+    <SUITE FILE_PATH="coverage/my_twitter@Dev.coverage" NAME="Dev Coverage Results" MODIFIED="1515899991145" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="project_one" />
     <SUITE FILE_PATH="coverage/my_twitter@Production__my_twitter.coverage" NAME="Production: my_twitter Coverage Results" MODIFIED="1513498318522" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="project_one" />
   </component>
   <component name="DatabaseView">
@@ -56,8 +59,31 @@
       <file leaf-file-name="new.html.erb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/new.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4304">
-              <caret line="269" column="69" lean-forward="false" selection-start-line="269" selection-start-column="69" selection-end-line="269" selection-end-column="69" />
+            <state relative-caret-position="2960">
+              <caret line="185" column="6" lean-forward="true" selection-start-line="185" selection-start-column="6" selection-end-line="185" selection-end-column="6" />
+              <folding>
+                <element signature="e#7693#9217#0#HTML" expanded="false" />
+                <element signature="e#9266#10718#0#HTML" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="user_tag.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/user_tag.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="follow.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/follow.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="416">
+              <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -73,47 +99,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="im_info.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/im_info.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="9" column="5" lean-forward="false" selection-start-line="9" selection-start-column="5" selection-end-line="9" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="user.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/user.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="624">
-              <caret line="54" column="0" lean-forward="true" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="comment.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/comment.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="22" column="68" lean-forward="true" selection-start-line="22" selection-start-column="68" selection-end-line="22" selection-end-column="68" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="personal_homepage_controller.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/personal_homepage_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="160" column="0" lean-forward="false" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
+            <state relative-caret-position="752">
+              <caret line="158" column="72" lean-forward="false" selection-start-line="158" selection-start-column="72" selection-end-line="158" selection-end-column="72" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Erb File" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -157,7 +160,6 @@
         <option value="$PROJECT_DIR$/app/views/personal_homepage/personal_homepage_update_name.js.erb.js" />
         <option value="$PROJECT_DIR$/app/views/personal_homepage/personal_homepage_update_name.js.erb" />
         <option value="$PROJECT_DIR$/app/views/personal_homepage/name.js.erb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/views/personal_homepage/update_name.js.erb" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/app/views/personal_homepage/update_name.html.erb" />
@@ -171,7 +173,14 @@
         <option value="$PROJECT_DIR$/app/models/im_info.rb" />
         <option value="$PROJECT_DIR$/app/models/user.rb" />
         <option value="$PROJECT_DIR$/app/views/personal_homepage/update_password.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/personal_homepage/follow.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/personal_homepage/unfollow.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/personal_homepage/add_tag.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/personal_homepage/delete_tag.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/personal_homepage/get_tags.html.erb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/controllers/personal_homepage_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/user_tag.rb" />
         <option value="$PROJECT_DIR$/app/views/personal_homepage/new.html.erb" />
       </list>
     </option>
@@ -514,7 +523,7 @@
       <workItem from="1515734982492" duration="102000" />
       <workItem from="1515809173373" duration="5484000" />
       <workItem from="1515816867942" duration="8268000" />
-      <workItem from="1515894854329" duration="1894000" />
+      <workItem from="1515894854329" duration="5287000" />
     </task>
     <task id="LOCAL-00001" summary="发布推文功能实现，以及查询数据库信息，选取一部分展示">
       <created>1513497489007</created>
@@ -628,11 +637,18 @@
       <option name="project" value="LOCAL" />
       <updated>1515825023041</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="修改密码">
+      <created>1515896759901</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1515896759901</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="108330000" />
+    <option name="totallyTimeSpent" value="111723000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -653,13 +669,13 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2496361" sideWeight="0.5747221" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24945927" sideWeight="0.41205055" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19754867" sideWeight="0.46841595" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24945927" sideWeight="0.4105928" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19754867" sideWeight="0.4664723" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24945927" sideWeight="0.40281826" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21477163" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19754867" sideWeight="0.5315841" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19754867" sideWeight="0.5335277" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.11823966" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -699,7 +715,8 @@
     <MESSAGE value="发送im_info" />
     <MESSAGE value="关注和取关" />
     <MESSAGE value="读im_info" />
-    <option name="LAST_COMMIT_MESSAGE" value="读im_info" />
+    <MESSAGE value="修改密码" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改密码" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -715,44 +732,6 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/sessions/new.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="21" column="16" lean-forward="true" selection-start-line="21" selection-start-column="16" selection-end-line="21" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="http://0.0.0.0:3000/assets/applicants.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1">
-      <provider selected="true" editor-type-id="httpFileEditor">
-        <state />
-      </provider>
-    </entry>
-    <entry file="http://0.0.0.0:3000/assets/personal_homepage.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1">
-      <provider selected="true" editor-type-id="httpFileEditor">
-        <state />
-      </provider>
-    </entry>
-    <entry file="http://0.0.0.0:3000/assets/sessions.self-877aef30ae1b040ab8a3aba4e3e309a11d7f2612f44dde450b5c157aa5f95c05.js?body=1">
-      <provider selected="true" editor-type-id="httpFileEditor">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/name.js.erb" />
-    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/update_name.js.erb" />
-    <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.comment_thumbs_ups">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.comments">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.schema_migrations">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -782,13 +761,6 @@
       </provider>
     </entry>
     <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.tweet_thumbs_ups">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.user_tags">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true" />
@@ -861,13 +833,6 @@
     <entry file="file://$PROJECT_DIR$/public/heads/default.png">
       <provider selected="true" editor-type-id="images">
         <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/update_head_picture.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="19" lean-forward="true" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/public/heads/1.jpeg">
@@ -958,13 +923,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/follow.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.gem/ruby/2.3.0/gems/bundler-1.16.0/lib/bundler/settings.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="748">
@@ -979,14 +937,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="37" lean-forward="false" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/im_info.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -996,13 +946,6 @@
       </provider>
     </entry>
     <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.users">
-      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-        <state>
-          <filtering enabled="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.im_infos">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
           <filtering enabled="true" />
@@ -1041,19 +984,124 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/update_head_picture.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/follow.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/unfollow.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/add_tag.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/delete_tag.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/get_tags.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="14" lean-forward="false" selection-start-line="0" selection-start-column="14" selection-end-line="0" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="12" column="37" lean-forward="false" selection-start-line="12" selection-start-column="37" selection-end-line="12" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/E4X.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/lang/javascript/index/predefined/DOMCore.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="503" column="0" lean-forward="false" selection-start-line="503" selection-start-column="0" selection-end-line="503" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.im_infos">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="das://table:/c846965f/04e87dab-11f6-4470-91ce-85359aad7a73/main.user_tags">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/personal_homepage_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="160" column="0" lean-forward="false" selection-start-line="160" selection-start-column="0" selection-end-line="160" selection-end-column="0" />
+        <state relative-caret-position="752">
+          <caret line="158" column="72" lean-forward="false" selection-start-line="158" selection-start-column="72" selection-end-line="158" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/follow.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/user_tag.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/personal_homepage/new.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4304">
-          <caret line="269" column="69" lean-forward="false" selection-start-line="269" selection-start-column="69" selection-end-line="269" selection-end-column="69" />
-          <folding />
+        <state relative-caret-position="2960">
+          <caret line="185" column="6" lean-forward="true" selection-start-line="185" selection-start-column="6" selection-end-line="185" selection-end-column="6" />
+          <folding>
+            <element signature="e#7693#9217#0#HTML" expanded="false" />
+            <element signature="e#9266#10718#0#HTML" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
