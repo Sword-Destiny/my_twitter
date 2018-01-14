@@ -152,7 +152,7 @@ class PersonalHomepageController < ApplicationController
       return
     end
     tag_id = params[:id]
-    if UserTag.delete_user_tag(tag_id,user)
+    if UserTag.delete_user_tag(tag_id, user)
       respond_to do |format|
         format.js
         format.html
@@ -168,11 +168,15 @@ class PersonalHomepageController < ApplicationController
   end
 
   def update_name
-    oldname = session[:current_user]['name']
     newname = params[:newname]
     user_id = session[:current_user]['id']
     if newname == nil or newname==''
-      # TODO
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '用户名为空'}.to_json}
+      end
+      return
     end
     r = User.update_name(user_id, newname)
     if r
@@ -181,13 +185,13 @@ class PersonalHomepageController < ApplicationController
       respond_to do |format|
         format.js
         format.html
-        format.json {render :json => {:oldname => oldname}.to_json}
+        format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
       end
     else
       respond_to do |format|
         format.js
         format.html
-        format.json {render :json => {:oldname => oldname}.to_json}
+        format.json {render :json => {:status => 'error', :info => '失败'}.to_json}
       end
     end
     r

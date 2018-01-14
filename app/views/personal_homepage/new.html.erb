@@ -405,7 +405,15 @@
                 success: function (data, textStatus) {
                     //alert(JSON.stringify(data));
                     //alert(textStatus);
-                    $('#username').html("用户:" + name)
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#username').html(name);
+                        $('#newname').val("");
+                        $('#newname').attr("placeholder", data.info);
+                    } else {
+                        $('#newname').val("");
+                        $('#newname').attr("placeholder", data.info);
+                    }
                 }
             });
         });
