@@ -144,8 +144,7 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        $('#newtag').val('');
-                        $('#newtag').attr("placeholder", data.info);
+                        $('#newtag').val('').attr("placeholder", data.info);
                         var newtag_element = document.getElementById("newtag");
                         var tags = document.getElementById("tags");
 
@@ -171,8 +170,7 @@
                         tags.insertBefore(subdiv, newtag_element);
 
                     } else {
-                        $('#newtag').val('');
-                        $('#newtag').attr("placeholder", data.info);
+                        $('#newtag').val('').attr("placeholder", data.info);
                     }
                 }
             });
@@ -227,15 +225,11 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        $('#password').val('');
-                        $('#password_repeat').val('');
-                        $('#password').attr("placeholder", data.info);
-                        $('#password_repeat').attr("placeholder", "Repeat");
+                        $('#password').val('').attr("placeholder", data.info);
+                        $('#password_repeat').val('').attr("placeholder", "Repeat");
                     } else {
-                        $('#password').val('');
-                        $('#password_repeat').val('');
-                        $('#password').attr("placeholder", data.info);
-                        $('#password_repeat').attr("placeholder", "Repeat");
+                        $('#password').val('').attr("placeholder", data.info);
+                        $('#password_repeat').val('').attr("placeholder", "Repeat");
                     }
                 }
             });
@@ -317,10 +311,8 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        $('#follow_text').html("成功");
-                        $('#follow_text').attr("id", "unfollow_text");
-                        $('#follow_btn').html("取关");
-                        $('#follow_btn').attr("id", "unfollow_btn");
+                        $('#follow_text').html("成功").attr("id", "unfollow_text");
+                        $('#follow_btn').html("取关").attr("id", "unfollow_btn");
                         $('#unfollow_btn').click(unfollow);
                         $('#follow_div').attr("id", "unfollow_div");
                     } else {
@@ -347,10 +339,8 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        $('#unfollow_text').html("成功");
-                        $('#unfollow_text').attr("id", "follow_text");
-                        $('#unfollow_btn').html("关注");
-                        $('#unfollow_btn').attr("id", "follow_btn");
+                        $('#unfollow_text').html("成功").attr("id", "follow_text");
+                        $('#unfollow_btn').html("关注").attr("id", "follow_btn");
                         $('#follow_btn').click(follow);
                         $('#unfollow_div').attr("id", "follow_div");
                     } else {
@@ -381,11 +371,9 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        $('#send_im').val("");
-                        $('#send_im').attr("placeholder", data.info);
+                        $('#send_im').val("").attr("placeholder", data.info);
                     } else {
-                        $('#send_im').val("");
-                        $('#send_im').attr("placeholder", data.info);
+                        $('#send_im').val("").attr("placeholder", data.info);
                     }
                 }
             });
@@ -409,11 +397,9 @@
                     var status = data.status.toString();
                     if ("success" === status) {
                         $('#username').html(name);
-                        $('#newname').val("");
-                        $('#newname').attr("placeholder", data.info);
+                        $('#newname').val("").attr("placeholder", data.info);
                     } else {
-                        $('#newname').val("");
-                        $('#newname').attr("placeholder", data.info);
+                        $('#newname').val("").attr("placeholder", data.info);
                     }
                 }
             });

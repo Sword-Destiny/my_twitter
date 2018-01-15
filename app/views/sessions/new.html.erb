@@ -357,10 +357,10 @@
                     if ("success" === status) {
                         window.location.href = "/sessions/new";
                     } else {
-                        $('#name').val('');
-                        $('#password').val('');
-                        $('#name').attr("placeholder", data.info);
-                        $('#password').attr("placeholder", "Password");
+                        $('#name').val('').attr("placeholder", data.info);
+                        $('#password').val('').attr("placeholder", "Password");
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
                     }
                 }
             });
