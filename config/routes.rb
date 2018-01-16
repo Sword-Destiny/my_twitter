@@ -38,6 +38,10 @@ Rails.application.routes.draw do
 
   post 'sessions/unthumbsup'
 
+  post 'sessions/thumbsup_comment'
+
+  post 'sessions/unthumbsup_comment'
+
   post 'sessions/reply_comment'
 
   post 'sessions/reply_top_comment'

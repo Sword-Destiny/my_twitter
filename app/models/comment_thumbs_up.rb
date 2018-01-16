@@ -1,35 +1,37 @@
 class CommentThumbsUp < ActiveRecord::Base
 
+
   # 点赞
-  def CommentThumbsUp.thumbs_up(user_id, comment_id)
-    user = User.find_by(id: user_id)
-    comment = Comment.find_by(id: comment_id)
-    if user and comment
-      thumbs_up = CommentThumbsUp.new
-      thumbs_up[:user_id]=user_id
-      thumbs_up[:comment_id]=comment_id
-      if thumbs_up.save
-        comment.update_attributes(:thumbs_up_num => comment[:thumbs_up_num] + 1)
-        true
-      else
-        false # 点赞失败
-      end
+  def CommentThumbsUp.thumbs_up(user_id, comment)
+    thumbs_up = CommentThumbsUp.new
+    thumbs_up[:user_id]=user_id
+    thumbs_up[:comment_id]=comment[:id]
+    if CommentThumbsUp.where('user_id = ? and comment_id = ?', user_id, comment[:id]).length > 0
+      return false, 1 # 点过赞了
+    end
+    if thumbs_up.save
+      comment.update_attributes(:thumbs_up_num => comment[:thumbs_up_num]+1)
+      return true, 0
     else
-      false # 用户或者评论不存在
+      return false, 0 # 点赞失败
     end
   end
 
+  def CommentThumbsUp.find_thumbs_up(user_id, comment_id)
+    r = CommentThumbsUp.where('user_id = ? and comment_id = ?', user_id, comment_id)
+    return r.length > 0
+  end
+
   # 取消点赞
-  def CommentThumbsUp.un_thumbs_up(user_id, comment_id)
-    comment = Comment.find_by(id: comment_id)
-    unless comment # 评论不存在
-      false
+  def CommentThumbsUp.un_thumbs_up(user_id, comment)
+    unless CommentThumbsUp.where('user_id = ? and comment_id = ?', user_id, comment[:id]).length > 0
+      return false, 1 # 没点过赞
     end
-    if CommentThumbsUp.delete_all('user_id = ? and comment_id = ?', user_id, comment_id)
-      comment.update_attributes(:thumbs_up_num => comment[:thumbs_up_num] - 1)
-      true
+    if CommentThumbsUp.delete_all(['user_id = ? and comment_id = ?', user_id, comment[:id]])
+      comment.update_attributes(:thumbs_up_num => comment[:thumbs_up_num]-1)
+      return true, 0
     else
-      false # 点赞不存在
+      return false, 0 # 取消点赞失败
     end
   end
 

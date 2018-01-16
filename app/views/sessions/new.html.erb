@@ -71,22 +71,32 @@
           <button id="transmit_btn_<%= it[:tweet][:id] %>" class="transmit_btn">转发</button>
         </p>
         <%
-          comments_list = Comment.list_comments(it[:tweet][:id])
+          comments_list = Comment.list_comments(it[:tweet][:id], cu['id'])
           comments_list.each do |item|
         %>
             <div id="div_comment_<%= item[:top_comment][:id] %>">
-              <p>----<%= raw item[:username] %> 评论:</p>
-              <div>----<%= raw item[:top_comment][:contents] %></div>
-              <span id="top_comment_thumbsup_num_<%= item[:top_comment][:id] %>">----点赞数:<%= item[:top_comment][:thumbs_up_num] %></span>
+              <p><%= raw item[:username] %> 评论:</p>
+              <span><%= raw item[:top_comment][:contents] %></span>
+              <% if item[:thumbsup] %>
+                  <button type="button" id="comment_unthumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_unthumbsup_btn">取消点赞</button>
+              <% else %>
+                  <button type="button" id="comment_thumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_thumbsup_btn">点赞</button>
+              <% end %>
+              <span id="comment_thumbsup_num_<%= item[:top_comment][:id] %>"><%= item[:top_comment][:thumbs_up_num] %></span>
               <span id="top_reply_num_<%= item[:top_comment][:id] %>">回复数:<%= item[:top_comment][:replyed_num] %></span>
               <button type="button" id="reply_top_comment_btn_<%= item[:top_comment][:id] %>" class="reply_top_comment_btn">回复</button>
               <%
                 item[:elements].each do |element|
               %>
                   <div id="comment_<%= element[:comment][:id] %>">
-                    <span>--------<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> 评论:</span>
-                    <div>--------<%= raw element[:comment][:contents] %></div>
-                    <span id="comment_thumbsup_num_<%= element[:comment][:id] %>">--------点赞数:<%= element[:comment][:thumbs_up_num] %></span>
+                    <span>----<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> :</span>
+                    <span><%= raw element[:comment][:contents] %></span>
+                    <% if element[:thumbsup] %>
+                        <button type="button" id="comment_unthumbsup_btn_<%= element[:comment][:id] %>" class="comment_unthumbsup_btn">取消点赞</button>
+                    <% else %>
+                        <button type="button" id="comment_thumbsup_btn_<%= element[:comment][:id] %>" class="comment_thumbsup_btn">点赞</button>
+                    <% end %>
+                    <span id="comment_thumbsup_num_<%= element[:comment][:id] %>"><%= element[:comment][:thumbs_up_num] %></span>
                     <span id="comment_reply_num_<%= element[:comment][:id] %>">回复数:<%= element[:comment][:replyed_num] %></span>
                     <button type="button" id="reply_comment_btn_<%= element[:comment][:id] %>" class="reply_comment_btn">回复</button>
                   </div>
@@ -120,18 +130,90 @@
     });
     $(document).ready(function () {
 
-        $('.tweet_thumbsup_btn').click(thumbsup_un_thumbsup);
-        $('.tweet_unthumbsup_btn').click(thumbsup_un_thumbsup);
+        $('.tweet_thumbsup_btn').click(tweet_thumbsup_un_thumbsup);
+        $('.tweet_unthumbsup_btn').click(tweet_thumbsup_un_thumbsup);
 
-        function thumbsup_un_thumbsup(param) {
+        $('.comment_thumbsup_btn').click(comment_thumbsup_un_thumbsup);
+        $('.comment_unthumbsup_btn').click(comment_thumbsup_un_thumbsup);
+
+        function tweet_thumbsup_un_thumbsup(param) {
             if (param.target.getAttribute("class") === "tweet_unthumbsup_btn") {
-                un_thumbsup(param);
+                tweet_un_thumbsup(param);
             } else {
-                thumbsup(param);
+                tweet_thumbsup(param);
             }
         }
 
-        function thumbsup(param) {
+        function comment_thumbsup_un_thumbsup(param) {
+            if (param.target.getAttribute("class") === "comment_unthumbsup_btn") {
+                comment_un_thumbsup(param);
+            } else {
+                comment_thumbsup(param);
+            }
+        }
+
+        function comment_thumbsup(param) {
+            var comment_id = param.target.id.substr(21);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/thumbsup_comment",
+                data: {"comment_id": comment_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("comment_thumbsup_btn_" + comment_id);
+                        btn.innerHTML = "取消点赞";
+                        btn.id = "comment_unthumbsup_btn_" + comment_id;
+                        btn.setAttribute("class", "comment_unthumbsup_btn");
+                        document.getElementById("comment_thumbsup_num_" + comment_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+        function comment_un_thumbsup(param) {
+            var comment_id = param.target.id.substr(23);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/unthumbsup_comment",
+                data: {"comment_id": comment_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("comment_unthumbsup_btn_" + comment_id);
+                        btn.innerHTML = "点赞";
+                        btn.id = "comment_thumbsup_btn_" + comment_id;
+                        btn.setAttribute("class", "comment_thumbsup_btn");
+                        document.getElementById("comment_thumbsup_num_" + comment_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+
+        function tweet_thumbsup(param) {
             var tweet = param.target.parentNode.parentNode;
             var tweet_id = tweet.id.substr(6);
             $.ajax({
@@ -162,7 +244,7 @@
             });
         }
 
-        function un_thumbsup(param) {
+        function tweet_un_thumbsup(param) {
             var tweet = param.target.parentNode.parentNode;
             var tweet_id = tweet.id.substr(6);
             $.ajax({
@@ -315,11 +397,12 @@
             var top_comment = document.getElementById("div_comment_" + top_comment_id);
             var div = document.createElement('div');
             div.id = "comment_" + new_comment_id;
-            div.innerHTML = '<p>--------<%=raw cu ? cu['name']:'' %> 回复 ' + reply_user_name + ' 评论:</p>' +
-                '<div>--------' + comment + '</div>' +
-                '<span id="comment_thumbsup_num_' + new_comment_id + '">--------点赞数:0</span>' +
-                '<span id="comment_reply_num_' + new_comment_id + '">回复数:0</span>' +
-                '<button type="button" id="reply_comment_btn_' + new_comment_id + '" class="reply_comment_btn">回复</button>';
+            div.innerHTML = '<span>----<%=raw cu ? cu['name']:'' %> 回复 ' + reply_user_name + ' :</span>\n' +
+                '<span>' + comment + '</span>\n' +
+                '<button type="button" id="comment_thumbsup_btn_' + new_comment_id + '" class="comment_thumbsup_btn">点赞</button>\n' +
+                '<span id="comment_thumbsup_num_' + new_comment_id + '">0</span>\n' +
+                '<span id="comment_reply_num_' + new_comment_id + '">回复数:0</span>\n' +
+                '<button type="button" id="reply_comment_btn_' + new_comment_id + '" class="reply_comment_btn">回复</button>\n';
             top_comment.appendChild(div);
             document.getElementById("reply_comment_btn_" + new_comment_id).onclick = reply_comment;
         }
@@ -329,11 +412,12 @@
             var text = document.getElementById("post_comment_" + tweet_id);
             var div = document.createElement('div');
             div.id = "div_comment_" + top_comment_id;
-            div.innerHTML = '<p>----<%=raw cu ? cu['name']:'' %> 评论:</p>' +
-                '<div>----' + contents + '</div>' +
-                '<span id="top_comment_thumbsup_num_' + top_comment_id + '">----点赞数:0</span>' +
-                '<span id="top_reply_num_' + top_comment_id + '">回复数:0</span>' +
-                '<button type="button" id="reply_top_comment_btn_' + top_comment_id + '" class="reply_top_comment_btn">回复</button>';
+            div.innerHTML = '<p><%=raw cu ? cu['name']:'' %> 评论:</p>\n' +
+                '<span>' + contents + '</span>\n' +
+                '<button type="button" id="comment_thumbsup_btn_' + top_comment_id + '" class="comment_thumbsup_btn">点赞</button>\n' +
+                '<span id="comment_thumbsup_num_' + top_comment_id + '">0</span>\n' +
+                '<span id="top_reply_num_' + top_comment_id + '">回复数:0</span>\n' +
+                '<button type="button" id="reply_top_comment_btn_' + top_comment_id + '" class="reply_top_comment_btn">回复</button>\n';
             tweet.insertBefore(div, text);
             document.getElementById("reply_top_comment_btn_" + top_comment_id).onclick = reply_top_comment;
         }
@@ -376,7 +460,7 @@
                     div.removeChild(cancel);
                     btn.hidden = false;
                     add_reply_comment(comment, top_comment_id, data.new_comment_id, data.reply_user_name);
-                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "----回复数:" + data.top_comment_reply_num;
+                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "回复数:" + data.top_comment_reply_num;
                     document.getElementById("comment_num_" + tweet_id).innerHTML = "评论数:" + data.tweet_comment_num;
                 };
                 sure_top_comment(comment, top_comment_id, tweet_id, error, success);
@@ -424,8 +508,8 @@
                     div.removeChild(cancel);
                     btn.hidden = false;
                     add_reply_comment(comment, top_comment_id, data.new_comment_id, data.reply_user_name);
-                    document.getElementById("comment_reply_num_" + comment_id).innerHTML = "----回复数:" + data.reply_comment_reply_num;
-                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "----回复数:" + data.top_comment_reply_num;
+                    document.getElementById("comment_reply_num_" + comment_id).innerHTML = "回复数:" + data.reply_comment_reply_num;
+                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "回复数:" + data.top_comment_reply_num;
                     document.getElementById("comment_num_" + tweet_id).innerHTML = "评论数:" + data.tweet_comment_num;
                 };
                 sure_comment(comment, comment_id, top_comment_id, tweet_id, error, success);

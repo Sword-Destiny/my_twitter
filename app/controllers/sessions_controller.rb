@@ -173,6 +173,94 @@ class SessionsController < ApplicationController
     end
   end
 
+  def thumbsup_comment
+    comment_id = params[:comment_id]
+    comment = Comment.find_by(id: comment_id)
+    user = session[:current_user]
+    unless comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    s, code= CommentThumbsUp.thumbs_up(user['id'], comment)
+    if s
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :num => comment[:thumbs_up_num]}.to_json}
+      end
+    else
+      if code == 0
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '点赞失败'}.to_json}
+        end
+      else
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '已经点过赞了'}.to_json}
+        end
+      end
+    end
+  end
+
+  def unthumbsup_comment
+    comment_id = params[:comment_id]
+    comment = Comment.find_by(id: comment_id)
+    user = session[:current_user]
+    unless comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    s, code= CommentThumbsUp.un_thumbs_up(user['id'], comment)
+    if s
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :num => comment[:thumbs_up_num]}.to_json}
+      end
+    else
+      if code == 0
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '取消点赞失败'}.to_json}
+        end
+      else
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '还没有赞过,不能取消点赞'}.to_json}
+        end
+      end
+    end
+  end
+  
   def thumbsup
     tweet_id = params[:tweet_id]
     tweet = Tweet.find_by(id: tweet_id)

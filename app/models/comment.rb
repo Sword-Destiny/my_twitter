@@ -6,14 +6,15 @@ class Comment < ActiveRecord::Base
   end
 
   # 获取所有评论
-  def Comment.list_comments(tweet_id)
+  def Comment.list_comments(tweet_id, user_id)
     comments = Comment.where('tweet_id = ?', tweet_id)
     users = User.where('id in (select user_id from  comments where tweet_id = ?)', tweet_id)
     comments_list = []
     comments.each do |comment|
       if is_top_comment(comment)
+        thumbsup = CommentThumbsUp.find_thumbs_up(user_id, comment[:id])
         user = users.find_by(id: comment[:user_id])
-        comments_list.push({:top_comment_id => comment[:id], :username => user[:name], :top_comment => comment, :elements => []})
+        comments_list.push({:top_comment_id => comment[:id], :thumbsup => thumbsup, :username => user[:name], :top_comment => comment, :elements => []})
       end
     end
 
@@ -23,7 +24,8 @@ class Comment < ActiveRecord::Base
           reply_comment = comments.find_by(id: c[:reply_comment_id])
           reply_user = users.find_by(id: reply_comment[:user_id])
           user = users.find_by(id: c[:user_id])
-          item[:elements].push({:username => user[:name], :reply_username => reply_user[:name], :comment => c})
+          thumbsup = CommentThumbsUp.find_thumbs_up(user_id, c[:id])
+          item[:elements].push({:username => user[:name], :thumbsup => thumbsup, :reply_username => reply_user[:name], :comment => c})
           break
         end
       end
