@@ -81,7 +81,9 @@
             <%
               im_infos.each do |im_info|
             %>
-                <p>from:<%= im_info[:username] %></p>
+                <p>from: <%= im_info[:username] %>
+                  <a href="/personal_homepage/new?home_user_id=<%= im_info[:from] %>"><img src="<%= im_info[:picture] %>"></a>
+                </p>
                 <%
                   im_info[:im].each do |info|
                 %>
@@ -106,7 +108,7 @@
   %>
       <div id="send_im_info">
         <input type="text" placeholder="消息" id="send_im">
-        <button type="button" id="send_im_btn">发送私信</button>
+        <button type="button" id="send_im_btn">发送私信(阅后即焚)</button>
       </div>
       <%
         if Follow.is_follow(@home_user_id, cu['id'])

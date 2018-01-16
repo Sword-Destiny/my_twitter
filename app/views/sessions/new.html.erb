@@ -52,7 +52,7 @@
       if params[:search] == '1'
         tweets_list = Tweet.search_tweet(user_id, params[:keyword])
       else
-        tweets_list = Tweet.list_tweets(cu['id'])
+        tweets_list = Tweet.list_tweets(user_id)
       end
 
       tweets_list.each do |it|
