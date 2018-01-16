@@ -58,7 +58,12 @@
             </div>
         <% end %>
         <p>
-          <span>点赞数:<%= it[:tweet][:thumbs_up_num] %></span>
+          <% if it[:thumbsup] %>
+              <button type="button" id="tweet_unthumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_unthumbsup_btn">取消点赞</button>
+          <% else %>
+              <button type="button" id="tweet_thumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_thumbsup_btn">点赞</button>
+          <% end %>
+          <span id="tweet_thumbsup_num_span_<%= it[:tweet][:id] %>" class="tweet_thumbsup_num_span"><%= it[:tweet][:thumbs_up_num] %></span>
           <span id="comment_num_<%= it[:tweet][:id] %>">评论数:<%= it[:tweet][:comment_num] %></span>
           <span>转发数:<%= it[:tweet][:transmit_num] %></span>
         </p>
@@ -114,6 +119,80 @@
         });
     });
     $(document).ready(function () {
+
+        $('.tweet_thumbsup_btn').click(thumbsup_un_thumbsup);
+        $('.tweet_unthumbsup_btn').click(thumbsup_un_thumbsup);
+
+        function thumbsup_un_thumbsup(param) {
+            if (param.target.getAttribute("class") === "tweet_unthumbsup_btn") {
+                un_thumbsup(param);
+            } else {
+                thumbsup(param);
+            }
+        }
+
+        function thumbsup(param) {
+            var tweet = param.target.parentNode.parentNode;
+            var tweet_id = tweet.id.substr(6);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/thumbsup",
+                data: {"tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("tweet_thumbsup_btn_" + tweet_id);
+                        btn.innerHTML = "取消点赞";
+                        btn.id = "tweet_unthumbsup_btn_" + tweet_id;
+                        btn.setAttribute("class", "tweet_unthumbsup_btn");
+                        document.getElementById("tweet_thumbsup_num_span_" + tweet_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+        function un_thumbsup(param) {
+            var tweet = param.target.parentNode.parentNode;
+            var tweet_id = tweet.id.substr(6);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/unthumbsup",
+                data: {"tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("tweet_unthumbsup_btn_" + tweet_id);
+                        btn.innerHTML = "点赞";
+                        btn.id = "tweet_thumbsup_btn_" + tweet_id;
+                        btn.setAttribute("class", "tweet_thumbsup_btn");
+                        document.getElementById("tweet_thumbsup_num_span_" + tweet_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
 
         function sure_transmit(content, tweet_id, error, success) {
             $.ajax({

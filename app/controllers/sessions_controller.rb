@@ -173,6 +173,94 @@ class SessionsController < ApplicationController
     end
   end
 
+  def thumbsup
+    tweet_id = params[:tweet_id]
+    tweet = Tweet.find_by(id: tweet_id)
+    user = session[:current_user]
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    s, code= TweetThumbsUp.thumbs_up(user['id'], tweet)
+    if s
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :num => tweet[:thumbs_up_num]}.to_json}
+      end
+    else
+      if code == 0
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '点赞失败'}.to_json}
+        end
+      else
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '已经点过赞了'}.to_json}
+        end
+      end
+    end
+  end
+
+  def unthumbsup
+    tweet_id = params[:tweet_id]
+    tweet = Tweet.find_by(id: tweet_id)
+    user = session[:current_user]
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    s, code= TweetThumbsUp.un_thumbs_up(user['id'], tweet)
+    if s
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :num => tweet[:thumbs_up_num]}.to_json}
+      end
+    else
+      if code == 0
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '取消点赞失败'}.to_json}
+        end
+      else
+        respond_to do |format|
+          format.js
+          format.html
+          format.json {render :json => {:status => 'error', :info => '还没有赞过,不能取消点赞'}.to_json}
+        end
+      end
+    end
+  end
+
   def transmit
     tweet_id = params[:tweet_id]
     content = params[:content]
