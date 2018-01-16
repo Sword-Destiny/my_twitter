@@ -173,6 +173,43 @@ class SessionsController < ApplicationController
     end
   end
 
+  def transmit
+    tweet_id = params[:tweet_id]
+    content = params[:content]
+    user = session[:current_user]
+    tweet = Tweet.find_by(id: tweet_id)
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    new_tweet = Tweet.transmit_tweet(tweet, content, user['id'])
+    if new_tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '转发失败'}.to_json}
+      end
+    end
+  end
+
   def reply_comment
     tweet_id = params[:tweet_id]
     comment = params[:comment]

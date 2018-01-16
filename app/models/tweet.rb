@@ -16,13 +16,39 @@ class Tweet < ActiveRecord::Base
         if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
           tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => ''})
         else
-          transmit_name = User.find_by(id: tweet[:transmit_from_id])[:name]
-          tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => transmit_name})
+          transmit_tweet = Tweet.find_by(id: tweet[:transmit_from_id])
+          transmit_name = User.find_by(id: transmit_tweet[:user_id])[:name]
+          tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :transmit_tweet => transmit_tweet})
         end
       end
       tweets_list
     else
       Tweet.get_recommend_tweets(user_id)
+    end
+  end
+
+  def Tweet.transmit_tweet(old_tweet, contents, user_id)
+    tweet = Tweet.new
+    tweet[:user_id] = user_id
+    tweet[:contents] = contents
+    tweet[:thumbs_up_num] = 0
+    tweet[:transmit_num] = 0
+    if old_tweet[:transmit_from_id]==-1 or old_tweet[:transmit_from_id]=='-1'
+      tweet[:transmit_from_id] = old_tweet[:id]
+    else
+      tweet[:transmit_from_id] = old_tweet[:transmit_from_id]
+    end
+    tweet[:comment_num] = 0
+    if tweet.save
+      if old_tweet[:transmit_from_id]==-1 or old_tweet[:transmit_from_id]=='-1'
+        old_tweet.update_attribute(:transmit_num, old_tweet[:transmit_num]+1)
+      else
+        top_tweet = Tweet.find_by(id: old_tweet[:transmit_from_id])
+        top_tweet.update_attribute(:transmit_num, top_tweet[:transmit_num]+1)
+      end
+      tweet
+    else
+      nil
     end
   end
 

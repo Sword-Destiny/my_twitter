@@ -32,6 +32,8 @@ Rails.application.routes.draw do
 
   post 'sessions/post_comment'
 
+  post 'sessions/transmit'
+
   post 'sessions/reply_comment'
 
   post 'sessions/reply_top_comment'

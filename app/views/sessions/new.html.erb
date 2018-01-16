@@ -36,7 +36,7 @@
 <p>
   <button type="button" id='post_tweet_btn' class='post_tweet_btn'>发布</button>
 </p>
-<div id="tweets">
+<div id="tweets" class="tweets">
   <%
     if cu
       tweets_list = Tweet.list_tweets(cu['id'])
@@ -46,17 +46,25 @@
 
     tweets_list.each do |it|
   %>
-      <div id="tweet_<%= it[:tweet][:id] %>">
-        <p><%= it[:username] %> 发表:</p>
-        <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
-            <p>转发自:<%= it[:tweet][:transmit_name] %></p>
-        <% end %>
-        <div id=" <%= it[:tweet][:id] %> ">
+      <div id="tweet_<%= it[:tweet][:id] %>" class="tweet">
+        <p><%= it[:username] %> :</p>
+        <div id="tweet_contents_<%= it[:tweet][:id] %>" class="tweet_contents">
           <%= raw it[:tweet][:contents] %>
         </div>
-        <p>点赞数:<%= it[:tweet][:thumbs_up_num] %></p>
-        <p id="comment_num_<%= it[:tweet][:id] %>">评论数:<%= it[:tweet][:comment_num] %></p>
-        <p>转发数:<%= it[:tweet][:transmit_num] %></p>
+        <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+            <p>转发自:<%= it[:transmit_name] %></p>
+            <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
+              <%= raw it[:transmit_tweet][:contents] %>
+            </div>
+        <% end %>
+        <p>
+          <span>点赞数:<%= it[:tweet][:thumbs_up_num] %></span>
+          <span id="comment_num_<%= it[:tweet][:id] %>">评论数:<%= it[:tweet][:comment_num] %></span>
+          <span>转发数:<%= it[:tweet][:transmit_num] %></span>
+        </p>
+        <p id="p_transmit_<%= it[:tweet][:id] %>" class="p_transmit">
+          <button id="transmit_btn_<%= it[:tweet][:id] %>" class="transmit_btn">转发</button>
+        </p>
         <%
           comments_list = Comment.list_comments(it[:tweet][:id])
           comments_list.each do |item|
@@ -64,17 +72,17 @@
             <div id="div_comment_<%= item[:top_comment][:id] %>">
               <p>----<%= raw item[:username] %> 评论:</p>
               <div>----<%= raw item[:top_comment][:contents] %></div>
-              <p id="top_comment_thumbsup_num_<%= item[:top_comment][:id] %>">----点赞数:<%= item[:top_comment][:thumbs_up_num] %></p>
-              <p id="top_reply_num_<%= item[:top_comment][:id] %>">----回复数:<%= item[:top_comment][:replyed_num] %></p>
+              <span id="top_comment_thumbsup_num_<%= item[:top_comment][:id] %>">----点赞数:<%= item[:top_comment][:thumbs_up_num] %></span>
+              <span id="top_reply_num_<%= item[:top_comment][:id] %>">回复数:<%= item[:top_comment][:replyed_num] %></span>
               <button type="button" id="reply_top_comment_btn_<%= item[:top_comment][:id] %>" class="reply_top_comment_btn">回复</button>
               <%
                 item[:elements].each do |element|
               %>
                   <div id="comment_<%= element[:comment][:id] %>">
-                    <p>--------<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> 评论:</p>
+                    <span>--------<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> 评论:</span>
                     <div>--------<%= raw element[:comment][:contents] %></div>
-                    <p id="comment_thumbsup_num_<%= element[:comment][:id] %>">--------点赞数:<%= element[:comment][:thumbs_up_num] %></p>
-                    <p id="comment_reply_num_<%= element[:comment][:id] %>">--------回复数:<%= element[:comment][:replyed_num] %></p>
+                    <span id="comment_thumbsup_num_<%= element[:comment][:id] %>">--------点赞数:<%= element[:comment][:thumbs_up_num] %></span>
+                    <span id="comment_reply_num_<%= element[:comment][:id] %>">回复数:<%= element[:comment][:replyed_num] %></span>
                     <button type="button" id="reply_comment_btn_<%= element[:comment][:id] %>" class="reply_comment_btn">回复</button>
                   </div>
               <%
@@ -106,6 +114,74 @@
         });
     });
     $(document).ready(function () {
+
+        function sure_transmit(content, tweet_id, error, success) {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/transmit",
+                data: {"content": content, "tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        success(data);
+                    } else {
+                        error(data.info);
+                    }
+                }
+            });
+        }
+
+        function transmit(param) {
+            var tweet_id = param.target.parentNode.id.substr(11);
+            var p_transmit = param.target.parentNode;
+            var btn = param.target;
+            var input = document.createElement('input');
+            input.id = "input_transmit_" + tweet_id;
+            input.setAttribute("class", "input_transmit");
+            p_transmit.insertBefore(input, btn);
+            var sure = document.createElement('button');
+            sure.type = "button";
+            sure.id = "sure_transmit_" + tweet_id;
+            sure.setAttribute("class", "sure_transmit");
+            sure.innerHTML = "确定";
+            p_transmit.insertBefore(sure, btn);
+            var cancel = document.createElement('button');
+            cancel.type = "button";
+            cancel.id = "cancel_transmit_" + tweet_id;
+            cancel.setAttribute("class", "cancel_transmit");
+            cancel.innerHTML = "取消";
+            cancel.onclick = function () {
+                p_transmit.removeChild(input);
+                p_transmit.removeChild(sure);
+                p_transmit.removeChild(cancel);
+                btn.hidden = false;
+            };
+            sure.onclick = function () {
+                var content = input.value.toString();
+                var error = function (info) {
+                    input.value = '';
+                    input.placeholder = info;
+                };
+                var success = function (data) {
+                    window.location.href = "/sessions/new";
+                };
+                sure_transmit(content, tweet_id, error, success);
+            };
+            p_transmit.insertBefore(cancel, btn);
+            btn.hidden = true;
+        }
+
+        $('.transmit_btn').click(transmit);
+
         function sure_top_comment(comment, top, tweet, errorcallback, successcallback) {
             $.ajax({
                 type: "POST",
@@ -162,8 +238,8 @@
             div.id = "comment_" + new_comment_id;
             div.innerHTML = '<p>--------<%=raw cu ? cu['name']:'' %> 回复 ' + reply_user_name + ' 评论:</p>' +
                 '<div>--------' + comment + '</div>' +
-                '<p id="comment_thumbsup_num_' + new_comment_id + '">--------点赞数:0</p>' +
-                '<p id="comment_reply_num_' + new_comment_id + '">--------回复数:0</p>' +
+                '<span id="comment_thumbsup_num_' + new_comment_id + '">--------点赞数:0</span>' +
+                '<span id="comment_reply_num_' + new_comment_id + '">回复数:0</span>' +
                 '<button type="button" id="reply_comment_btn_' + new_comment_id + '" class="reply_comment_btn">回复</button>';
             top_comment.appendChild(div);
             document.getElementById("reply_comment_btn_" + new_comment_id).onclick = reply_comment;
@@ -176,10 +252,10 @@
             div.id = "div_comment_" + top_comment_id;
             div.innerHTML = '<p>----<%=raw cu ? cu['name']:'' %> 评论:</p>' +
                 '<div>----' + contents + '</div>' +
-                '<p id="top_comment_thumbsup_num_'+top_comment_id+'">----点赞数:0</p>' +
-                '<p id="top_reply_num_'+top_comment_id+'">----回复数:0</p>' +
-                '<button type="button" id="reply_top_comment_btn_'+top_comment_id+'" class="reply_top_comment_btn">回复</button>';
-            tweet.insertBefore(div,text);
+                '<span id="top_comment_thumbsup_num_' + top_comment_id + '">----点赞数:0</span>' +
+                '<span id="top_reply_num_' + top_comment_id + '">回复数:0</span>' +
+                '<button type="button" id="reply_top_comment_btn_' + top_comment_id + '" class="reply_top_comment_btn">回复</button>';
+            tweet.insertBefore(div, text);
             document.getElementById("reply_top_comment_btn_" + top_comment_id).onclick = reply_top_comment;
         }
 
@@ -301,7 +377,7 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        add_top_cmment(data.tweet_id,data.id,comment);
+                        add_top_cmment(data.tweet_id, data.id, comment);
                         var comment_num = document.getElementById("comment_num_" + tweet_id);
                         comment_num.innerHTML = "评论数:" + data.num;
                     } else {
