@@ -125,6 +125,14 @@ class PersonalHomepageController < ApplicationController
       return
     end
     newtag = params[:newtag]
+    if newtag == nil or newtag == ''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '标签为空'}.to_json}
+      end
+      return
+    end
     usertag = UserTag.add_user_tag(newtag, user)
     if usertag
       respond_to do |format|

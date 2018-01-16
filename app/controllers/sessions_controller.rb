@@ -217,6 +217,111 @@ class SessionsController < ApplicationController
     end
   end
 
+  def add_tag
+    user = User.find_by(id: session[:current_user]['id'])
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    newtag = params[:newtag]
+    if newtag == nil or newtag == ''
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '标签为空'}.to_json}
+      end
+      return
+    end
+    tweet_id = params[:tweet_id]
+    tweet = Tweet.find_by(id: tweet_id)
+    if tweet == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '找不到原动态'}.to_json}
+      end
+      return
+    end
+    if tweet[:user_id] != user[:id]
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '这不是你发表的动态,你不能添加标签'}.to_json}
+      end
+      return
+    end
+    tweet_tag = TweetTag.add_tweet_tag(newtag, tweet)
+    if tweet_tag
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功', :id => tweet_tag[:id], :tag => tweet_tag[:tag]}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '添加失败'}.to_json}
+      end
+    end
+  end
+
+  def delete_tag
+    tag_id = params[:tag_id]
+    tag = TweetTag.find_by(id: tag_id)
+    unless tag
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '标签已不存在'}.to_json}
+      end
+      return
+    end
+    user = User.find_by(id: session[:current_user]['id'])
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    tweet = Tweet.find_by(id: tag[:tweet_id])
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    if user[:id] != tweet[:user_id]
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '这不是你发表的动态,你不能删除其标签'}.to_json}
+      end
+      return
+    end
+    if TweetTag.delete_tweet_tag(tag_id, tweet)
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '删除失败'}.to_json}
+      end
+    end
+  end
+
   def unthumbsup_comment
     comment_id = params[:comment_id]
     comment = Comment.find_by(id: comment_id)
@@ -260,7 +365,7 @@ class SessionsController < ApplicationController
       end
     end
   end
-  
+
   def thumbsup
     tweet_id = params[:tweet_id]
     tweet = Tweet.find_by(id: tweet_id)

@@ -42,6 +42,10 @@ Rails.application.routes.draw do
 
   post 'sessions/unthumbsup_comment'
 
+  post 'sessions/add_tag'
+
+  post 'sessions/delete_tag'
+
   post 'sessions/reply_comment'
 
   post 'sessions/reply_top_comment'

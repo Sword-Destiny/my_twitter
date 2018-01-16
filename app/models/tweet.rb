@@ -14,8 +14,9 @@ class Tweet < ActiveRecord::Base
       tweets.each do |tweet|
         thumbsup = TweetThumbsUp.find_thumbs_up(user_id, tweet[:id])
         user = User.find_by(id: tweet[:user_id])
+        tags = TweetTag.list_tags(tweet[:id])
         if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
-          tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
+          tweets_list.push({:tags => tags, :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
         else
           transmit_tweet = Tweet.find_by(id: tweet[:transmit_from_id])
           transmit_name = User.find_by(id: transmit_tweet[:user_id])[:name]

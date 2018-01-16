@@ -51,6 +51,48 @@
         <div id="tweet_contents_<%= it[:tweet][:id] %>" class="tweet_contents">
           <%= raw it[:tweet][:contents] %>
         </div>
+        <% if it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+            <% if cu['id'] == it[:tweet][:user_id] %>
+                <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
+                  <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
+                    <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
+                      <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
+                      <%
+                        it[:tags].each do |tag|
+                      %>
+                          <td id="td_tags_<%= tag[:id] %>" class="td_tags">
+                            <%= tag[:tag] %>
+                            <button type="button" id="delete_tweet_tag_btn_<%= tag[:id] %>" class="delete_tweet_tag_btn">删除</button>
+                          </td>
+                      <%
+                        end
+                      %>
+                      <td id="td_add_tag_<%= it[:tweet][:id] %>" class="td_add_tag">
+                        <input type="text" id="input_add_tag_<%= it[:tweet][:id] %>" class="input_add_tag" placeholder="新标签">
+                        <button type="button" id="add_tag_btn_<%= it[:tweet][:id] %>" class="add_tag_btn">添加</button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+            <% else %>
+                <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
+                  <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
+                    <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
+                      <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
+                      <%
+                        it[:tags].each do |tag|
+                      %>
+                          <td id="td_tags_<%= it[:tweet][:id] %>" class="td_tags">
+                            <%= tag[:tag] %>
+                          </td>
+                      <%
+                        end
+                      %>
+                    </tr>
+                  </table>
+                </div>
+            <% end %>
+        <% end %>
         <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
             <p>转发自:<%= it[:transmit_name] %></p>
             <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
@@ -104,7 +146,6 @@
                 end
               %>
             </div>
-            <br/>
         <%
           end
         %>
@@ -129,6 +170,84 @@
         });
     });
     $(document).ready(function () {
+
+        $('.add_tag_btn').click(function (param) {
+            var tweet_id = param.target.id.substr(12);
+            var newtag = document.getElementById("input_add_tag_" + tweet_id).value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/add_tag",
+                data: {"newtag": newtag, "tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        document.getElementById("input_add_tag_" + tweet_id).value = "";
+                        document.getElementById("input_add_tag_" + tweet_id).setAttribute("placeholder", data.info);
+                        var td = document.getElementById("td_add_tag_" + tweet_id);
+                        var tr = document.getElementById("tr_tags_" + tweet_id);
+
+                        var subtd = document.createElement('td');
+                        subtd.id = "td_tags_" + data.id;
+                        subtd.setAttribute("class", "td_tags");
+                        subtd.innerHTML = data.tag;
+
+                        var btn = document.createElement('button');
+                        btn.type = "button";
+                        btn.id = "delete_tweet_tag_btn_" + data.id;
+                        btn.setAttribute("class", "delete_tweet_tag_btn");
+                        btn.innerHTML = "删除";
+                        btn.onclick = delete_tweet_tag;
+
+                        subtd.appendChild(btn);
+
+                        tr.insertBefore(subtd, td);
+
+                    } else {
+                        document.getElementById("input_add_tag_" + tweet_id).value = "";
+                        document.getElementById("input_add_tag_" + tweet_id).setAttribute("placeholder", data.info);
+                    }
+                }
+            });
+        });
+
+        $('.delete_tweet_tag_btn').click(delete_tweet_tag);
+
+        function delete_tweet_tag(param) {
+            var tag_id = param.target.id.substr(21);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/delete_tag",
+                data: {"tag_id": tag_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var td = document.getElementById("td_tags_" + tag_id);
+                        var tr = td.parentNode;
+                        tr.removeChild(td);
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
 
         $('.tweet_thumbsup_btn').click(tweet_thumbsup_un_thumbsup);
         $('.tweet_unthumbsup_btn').click(tweet_thumbsup_un_thumbsup);
@@ -405,6 +524,7 @@
                 '<button type="button" id="reply_comment_btn_' + new_comment_id + '" class="reply_comment_btn">回复</button>\n';
             top_comment.appendChild(div);
             document.getElementById("reply_comment_btn_" + new_comment_id).onclick = reply_comment;
+            document.getElementById("comment_thumbsup_btn_" + new_comment_id).onclick = comment_thumbsup_un_thumbsup;
         }
 
         function add_top_cmment(tweet_id, top_comment_id, contents) {
@@ -420,6 +540,7 @@
                 '<button type="button" id="reply_top_comment_btn_' + top_comment_id + '" class="reply_top_comment_btn">回复</button>\n';
             tweet.insertBefore(div, text);
             document.getElementById("reply_top_comment_btn_" + top_comment_id).onclick = reply_top_comment;
+            document.getElementById("comment_thumbsup_btn_" + top_comment_id).onclick = comment_thumbsup_un_thumbsup;
         }
 
         function reply_top_comment(param) {
