@@ -38,15 +38,15 @@ class ImInfo < ActiveRecord::Base
     im_infos = []
     if infos.length>0
       from = infos[0][:from]
-      username = User.find_by(id: from)[:name]
-      im_infos.push({:from => from, :username => username, :im => []})
+      fuser = User.find_by(id: from)
+      im_infos.push({:from => from, :username => fuser[:name], :picture => fuser[:head_picture], :im => []})
       infos.each do |info|
         if info[:from] == from
           im_infos.last[:im].push(info)
         else
           from = info[:from]
-          username = User.find_by(id: from)[:name]
-          im_infos.push({:from => from, :username => username, :im => []})
+          fuser = User.find_by(id: from)
+          im_infos.push({:from => from, :username => fuser[:name], :picture => fuser[:head_picture], :im => []})
         end
       end
     end
