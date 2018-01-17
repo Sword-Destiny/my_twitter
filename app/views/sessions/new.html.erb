@@ -55,123 +55,161 @@
       end
 
       tweets_list.each do |it|
+        if it[:type]=='tweet'
     %>
-        <div id="tweet_<%= it[:tweet][:id] %>" class="tweet">
-          <p>
-            <% if it[:recommend] %>
-                <span style="color: red">推荐 -> </span>
-            <% end %>
-            <%= it[:username] %> :
-          </p>
-          <div id="tweet_contents_<%= it[:tweet][:id] %>" class="tweet_contents">
-            <%= raw it[:tweet][:contents] %>
-          </div>
-          <% if it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
-              <% if user_id == it[:tweet][:user_id] %>
-                  <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
-                    <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
-                      <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
-                        <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
-                        <%
-                          it[:tags].each do |tag|
-                        %>
-                            <td id="td_tags_<%= tag[:id] %>" class="td_tags">
-                              <%= tag[:tag] %>
-                              <button type="button" id="delete_tweet_tag_btn_<%= tag[:id] %>" class="delete_tweet_tag_btn">删除</button>
+            <div id="tweet_<%= it[:tweet][:id] %>" class="tweet">
+              <p>
+                <% if it[:recommend] %>
+                    <span style="color: red">推荐 -> </span>
+                <% end %>
+                <%= it[:username] %> :
+              </p>
+              <div id="tweet_contents_<%= it[:tweet][:id] %>" class="tweet_contents">
+                <%= raw it[:tweet][:contents] %>
+              </div>
+              <% if it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+                  <% if user_id == it[:tweet][:user_id] %>
+                      <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
+                        <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
+                          <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
+                            <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
+                            <%
+                              it[:tags].each do |tag|
+                            %>
+                                <td id="td_tags_<%= tag[:id] %>" class="td_tags">
+                                  <%= tag[:tag] %>
+                                  <button type="button" id="delete_tweet_tag_btn_<%= tag[:id] %>" class="delete_tweet_tag_btn">删除</button>
+                                </td>
+                            <%
+                              end
+                            %>
+                            <td id="td_add_tag_<%= it[:tweet][:id] %>" class="td_add_tag">
+                              <input type="text" id="input_add_tag_<%= it[:tweet][:id] %>" class="input_add_tag" placeholder="新标签">
+                              <button type="button" id="add_tag_btn_<%= it[:tweet][:id] %>" class="add_tag_btn">添加</button>
                             </td>
-                        <%
-                          end
-                        %>
-                        <td id="td_add_tag_<%= it[:tweet][:id] %>" class="td_add_tag">
-                          <input type="text" id="input_add_tag_<%= it[:tweet][:id] %>" class="input_add_tag" placeholder="新标签">
-                          <button type="button" id="add_tag_btn_<%= it[:tweet][:id] %>" class="add_tag_btn">添加</button>
-                        </td>
-                      </tr>
-                    </table>
-                  </div>
-              <% else %>
-                  <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
-                    <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
-                      <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
-                        <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
-                        <%
-                          it[:tags].each do |tag|
-                        %>
-                            <td id="td_tags_<%= it[:tweet][:id] %>" class="td_tags">
-                              <%= tag[:tag] %>
-                            </td>
-                        <%
-                          end
-                        %>
-                      </tr>
-                    </table>
+                          </tr>
+                        </table>
+                      </div>
+                  <% else %>
+                      <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
+                        <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
+                          <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
+                            <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
+                            <%
+                              it[:tags].each do |tag|
+                            %>
+                                <td id="td_tags_<%= it[:tweet][:id] %>" class="td_tags">
+                                  <%= tag[:tag] %>
+                                </td>
+                            <%
+                              end
+                            %>
+                          </tr>
+                        </table>
+                      </div>
+                  <% end %>
+              <% end %>
+              <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+                  <p>转发自:<%= it[:transmit_name] %></p>
+                  <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
+                    <%= raw it[:transmit_tweet][:contents] %>
                   </div>
               <% end %>
-          <% end %>
-          <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
-              <p>转发自:<%= it[:transmit_name] %></p>
-              <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
-                <%= raw it[:transmit_tweet][:contents] %>
-              </div>
-          <% end %>
-          <p id="b_p_tweet_<%= it[:tweet][:id] %>" class="b_p_tweet">
-            <% if it[:thumbsup] %>
-                <button type="button" id="tweet_unthumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_unthumbsup_btn">取消点赞</button>
-            <% else %>
-                <button type="button" id="tweet_thumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_thumbsup_btn">点赞</button>
-            <% end %>
-            <span id="tweet_thumbsup_num_span_<%= it[:tweet][:id] %>" class="tweet_thumbsup_num_span"><%= it[:tweet][:thumbs_up_num] %></span>
-            <span id="comment_num_<%= it[:tweet][:id] %>">评论:<%= it[:tweet][:comment_num] %></span>
-            <button id="transmit_btn_<%= it[:tweet][:id] %>" class="transmit_btn">转发</button>
-            <span><%= it[:tweet][:transmit_num] %></span>
-            <% if user_id == it[:tweet][:user_id] %>
-                <button id="delete_tweet_btn_<%= it[:tweet][:id] %>" class="delete_tweet_btn" type="button">删除动态</button>
-            <% end %>
-          </p>
-          <%
-            comments_list = Comment.list_comments(it[:tweet][:id], user_id)
-            comments_list.each do |item|
-          %>
-              <div id="div_comment_<%= item[:top_comment][:id] %>">
-                <p><%= raw item[:username] %> 评论:</p>
-                <span><%= raw item[:top_comment][:contents] %></span>
-                <% if item[:thumbsup] %>
-                    <button type="button" id="comment_unthumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_unthumbsup_btn">取消点赞</button>
+              <p id="b_p_tweet_<%= it[:tweet][:id] %>" class="b_p_tweet">
+                <% if it[:thumbsup] %>
+                    <button type="button" id="tweet_unthumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_unthumbsup_btn">取消点赞</button>
                 <% else %>
-                    <button type="button" id="comment_thumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_thumbsup_btn">点赞</button>
+                    <button type="button" id="tweet_thumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_thumbsup_btn">点赞</button>
                 <% end %>
-                <span id="comment_thumbsup_num_<%= item[:top_comment][:id] %>"><%= item[:top_comment][:thumbs_up_num] %></span>
-                <span id="top_reply_num_<%= item[:top_comment][:id] %>">回复数:<%= item[:top_comment][:replyed_num] %></span>
-                <button type="button" id="reply_top_comment_btn_<%= item[:top_comment][:id] %>" class="reply_top_comment_btn">回复</button>
-                <%
-                  item[:elements].each do |element|
-                %>
-                    <div id="comment_<%= element[:comment][:id] %>">
-                      <span>----<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> :</span>
-                      <span><%= raw element[:comment][:contents] %></span>
-                      <% if element[:thumbsup] %>
-                          <button type="button" id="comment_unthumbsup_btn_<%= element[:comment][:id] %>" class="comment_unthumbsup_btn">取消点赞</button>
-                      <% else %>
-                          <button type="button" id="comment_thumbsup_btn_<%= element[:comment][:id] %>" class="comment_thumbsup_btn">点赞</button>
-                      <% end %>
-                      <span id="comment_thumbsup_num_<%= element[:comment][:id] %>"><%= element[:comment][:thumbs_up_num] %></span>
-                      <span id="comment_reply_num_<%= element[:comment][:id] %>">回复数:<%= element[:comment][:replyed_num] %></span>
-                      <button type="button" id="reply_comment_btn_<%= element[:comment][:id] %>" class="reply_comment_btn">回复</button>
+                <span id="tweet_thumbsup_num_span_<%= it[:tweet][:id] %>" class="tweet_thumbsup_num_span"><%= it[:tweet][:thumbs_up_num] %></span>
+                <span id="comment_num_<%= it[:tweet][:id] %>">评论:<%= it[:tweet][:comment_num] %></span>
+                <button id="transmit_btn_<%= it[:tweet][:id] %>" class="transmit_btn">转发</button>
+                <span><%= it[:tweet][:transmit_num] %></span>
+                <% if user_id == it[:tweet][:user_id] %>
+                    <button id="delete_tweet_btn_<%= it[:tweet][:id] %>" class="delete_tweet_btn" type="button">删除动态</button>
+                <% end %>
+              </p>
+              <%
+                comments_list = Comment.list_comments(it[:tweet][:id], user_id)
+                comments_list.each do |item|
+              %>
+                  <div id="div_comment_<%= item[:top_comment][:id] %>">
+                    <p><%= raw item[:username] %> 评论:</p>
+                    <span><%= raw item[:top_comment][:contents] %></span>
+                    <% if item[:thumbsup] %>
+                        <button type="button" id="comment_unthumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_unthumbsup_btn">取消点赞</button>
+                    <% else %>
+                        <button type="button" id="comment_thumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_thumbsup_btn">点赞</button>
+                    <% end %>
+                    <span id="comment_thumbsup_num_<%= item[:top_comment][:id] %>"><%= item[:top_comment][:thumbs_up_num] %></span>
+                    <span id="top_reply_num_<%= item[:top_comment][:id] %>">回复数:<%= item[:top_comment][:replyed_num] %></span>
+                    <button type="button" id="reply_top_comment_btn_<%= item[:top_comment][:id] %>" class="reply_top_comment_btn">回复</button>
+                    <%
+                      item[:elements].each do |element|
+                    %>
+                        <div id="comment_<%= element[:comment][:id] %>">
+                          <span>----<%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> :</span>
+                          <span><%= raw element[:comment][:contents] %></span>
+                          <% if element[:thumbsup] %>
+                              <button type="button" id="comment_unthumbsup_btn_<%= element[:comment][:id] %>" class="comment_unthumbsup_btn">取消点赞</button>
+                          <% else %>
+                              <button type="button" id="comment_thumbsup_btn_<%= element[:comment][:id] %>" class="comment_thumbsup_btn">点赞</button>
+                          <% end %>
+                          <span id="comment_thumbsup_num_<%= element[:comment][:id] %>"><%= element[:comment][:thumbs_up_num] %></span>
+                          <span id="comment_reply_num_<%= element[:comment][:id] %>">回复数:<%= element[:comment][:replyed_num] %></span>
+                          <button type="button" id="reply_comment_btn_<%= element[:comment][:id] %>" class="reply_comment_btn">回复</button>
+                        </div>
+                    <%
+                      end
+                    %>
+                  </div>
+              <%
+                end
+              %>
+              <input type="text" id="post_comment_<%= it[:tweet][:id] %>" class="post_comment" placeholder="你的评论">
+              <button type="button" id="post_comment_btn_<%= it[:tweet][:id] %>" class="post_comment_btn">评论</button>
+              <br/>
+            </div>
+        <%
+          else
+
+        %>
+            <div id="div_users" class="div_users">
+              <table border="0">
+                <tr>
+                  <td>
+                    <div>
+                      <%= it[:user][:name] %>,
                     </div>
-                <%
-                  end
-                %>
-              </div>
-          <%
-            end
-          %>
-          <input type="text" id="post_comment_<%= it[:tweet][:id] %>" class="post_comment" placeholder="你的评论">
-          <button type="button" id="post_comment_btn_<%= it[:tweet][:id] %>" class="post_comment_btn">评论</button>
-          <br/>
-        </div>
+                  </td>
+                  <td>ID:<span><%= it[:user][:id] %></span>,</td>
+                  <td>
+                    <div>
+                      <a href="/personal_homepage/new?home_user_id=<%= it[:user][:id] %>">
+                        <img src="<%= it[:user][:head_picture] %>">
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>标签:</td>
+                  <%
+                    it[:tags].each do |tag|
+                  %>
+                      <td>
+                        <%= tag[:tag] %>
+                      </td>
+                  <%
+                    end
+                  %>
+                </tr>
+              </table>
+            </div>
+        <%
+          end
+        %>
     <%
       end
-
     %>
   </div>
 </div>

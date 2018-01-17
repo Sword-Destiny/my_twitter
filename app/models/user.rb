@@ -21,6 +21,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  def User.process_users(users)
+    users_list = []
+    users.each do |user|
+      user_tags = UserTag.where('user_id = ?', user[:id])
+      users_list.push({:type => 'user', :user => user, :tags => user_tags})
+    end
+    users_list
+  end
+
   def User.update_head_picture(user_id, file, name)
     new_url = process_head_picture(file, user_id, name)
     user = User.find_by(id: user_id)
@@ -68,23 +77,16 @@ class User < ActiveRecord::Base
   end
 
   def User.search_user_name_id(keyword)
-    User.where('name like "%?%" or id = ?', keyword, keyword)
+    User.where('name like "%'+keyword+'%" or id = ?', keyword)
   end
 
   def User.search_user_tag(keyword)
     User.where('id in ( select user_id from user_tags where tag = ? )', keyword)
   end
 
-  def User.search(keyword)
-    # TODO
+  def User.search_user(keyword)
+    User.search_user_name_id(keyword)+User.search_user_tag(keyword)
   end
 
-  def User.gen_tags_by_tweet(user_id)
-    # TODO
-  end
-
-  def User.gen_tags_by_comments(user_id)
-    # TODO
-  end
 
 end
