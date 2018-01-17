@@ -24,6 +24,8 @@ Rails.application.routes.draw do
 
   post 'sessions/create'
 
+  post 'sessions/logout'
+
   get 'applicants/new'
 
   post 'applicants/create'

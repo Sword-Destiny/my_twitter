@@ -38,6 +38,24 @@ class SessionsController < ApplicationController
     end
   end
 
+  def logout
+    user = session[:current_user]
+    if user
+      session[:current_user] = nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '你尚未登录'}.to_json}
+      end
+    end
+  end
+
   def post_tweet
     if params[:content] == nil or params[:content] == ''
       respond_to do |format|

@@ -98,8 +98,35 @@ class Tweet < ActiveRecord::Base
     Tweet.delete_all(['id = ?', tweet_id]) and Comment.delete_all(['tweet_id = ?', tweet_id]) and TweetTag.delete_all(['tweet_id = ?', tweet_id]) and TweetThumbsUp.delete_all(['tweet_id = ?', tweet_id])
   end
 
-  # TODO 获取推荐内容,返回两条
+  # TODO 获取推荐内容,返回最多两条,去重
   def Tweet.get_recommend_tweets(user_id)
-    Tweet.where('id in (select tweet_id from hot_recommends)') + Tweet.where('id in (select tweet_id from tag_recommends where user_id = ?)', user_id)
+    hr = Tweet.where('id in (select tweet_id from hot_recommends)')
+    tr = Tweet.where('id in (select tweet_id from tag_recommends where user_id = ?)', user_id)
+    ht = []
+    hr.each do |tweet|
+      e = false
+      ht.each do |exist|
+        if tweet[:id] == exist[:id]
+          e = true
+          break
+        end
+      end
+      unless e
+        ht.push(tweet)
+      end
+    end
+    tr.each do |tweet|
+      e = false
+      ht.each do |exist|
+        if tweet[:id] == exist[:id]
+          e = true
+          break
+        end
+      end
+      unless e
+        ht.push(tweet)
+      end
+    end
+    ht
   end
 end

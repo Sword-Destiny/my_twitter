@@ -38,7 +38,12 @@
 
   <input type="text" id="name" class="name" placeholder="Name">
   <input type="password" placeholder="Password" class="password" id="password">
-  <button type="button" id="login" class="reister">登录</button>
+  <% if user_id ==-1 %>
+      <button type="button" id="login" class="login">登录</button>
+  <% else %>
+      <button type="button" id="login" class="login">切换用户</button>
+      <button type="button" id="logout" class="logout">退出</button>
+  <% end %>
   <a href="/applicants/new">注册</a>
   <div>
     <textarea id="content"></textarea>
@@ -807,6 +812,32 @@
                     } else {
                         $('#name').val('').attr("placeholder", data.info);
                         $('#password').val('').attr("placeholder", "Password");
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+        $('#logout').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/logout",
+                data: {},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        alert(data.info);
                         //$('#name').attr("placeholder", data.info);
                         //$('#password').attr("placeholder", "Password");
                     }
