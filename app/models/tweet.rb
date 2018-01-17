@@ -82,14 +82,7 @@ class Tweet < ActiveRecord::Base
   end
 
   def Tweet.delete_tweet(tweet_id)
-    tweet = Tweet.find_by(id: tweet_id)
-    if tweet
-      # 删除可能会失败
-      Tweet.delete_all('id = ?', tweet_id)
-      Comment.delete_all('tweet_id = ?', tweet_id)
-    else
-      false
-    end
+    Tweet.delete_all(['id = ?', tweet_id]) and Comment.delete_all(['tweet_id = ?', tweet_id]) and TweetTag.delete_all(['tweet_id = ?', tweet_id]) and TweetThumbsUp.delete_all(['tweet_id = ?', tweet_id])
   end
 
   # TODO 获取推荐内容,返回两条

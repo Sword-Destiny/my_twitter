@@ -290,13 +290,26 @@ class SessionsController < ApplicationController
       end
       return
     end
-    if tweet[:user_id]!=user[:id]
+    if tweet[:user_id]!=user['id']
       respond_to do |format|
         format.js
         format.html
         format.json {render :json => {:status => 'error', :info => '这不是你发表的动态,你没有权限删除'}.to_json}
       end
       return
+    end
+    if Tweet.delete_tweet(tweet_id)
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'success', :info => '删除成功'}.to_json}
+      end
+    else
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '删除失败'}.to_json}
+      end
     end
   end
 

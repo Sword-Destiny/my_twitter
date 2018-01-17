@@ -183,7 +183,7 @@
     $(document).ready(function () {
 
         $('.delete_tweet_btn').click(function (param) {
-            var tweet_id = param.target.id.substr(16);
+            var tweet_id = param.target.id.substr(17);
             $.ajax({
                 type: "POST",
                 url: "/sessions/delete_tweet",
