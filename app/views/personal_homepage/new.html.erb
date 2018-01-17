@@ -418,7 +418,12 @@
                 processData: false,
                 dataType: "json",
                 success: function (data, textStatus) {
-                    $('#home_user_head_picture').attr("src", data.new_url);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        $('#home_user_head_picture').attr("src", data.new_url);
+                    } else {
+                        alert(data.info);
+                    }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
                     //alert(JSON.stringify(XMLHttpRequest));

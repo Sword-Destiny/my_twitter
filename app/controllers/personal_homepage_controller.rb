@@ -3,28 +3,53 @@ class PersonalHomepageController < ApplicationController
   end
 
   def update_head_picture
+    user = session[:current_user]
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     file = File.read(params[:img_upload].path)
+    unless file
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请上传正确的文件'}.to_json}
+      end
+      return
+    end
     old_url = session[:current_user]['head_picture']
     r, new_url = User.update_head_picture(session[:current_user]['id'], file, params[:img_upload].original_filename)
     if r
       session[:current_user]['head_picture']=new_url
-      json = {:old_url => old_url, :new_url => new_url}.to_json
       respond_to do |format|
         format.js
         format.html
-        format.json {render :json => json}
+        format.json {render :json => {:status => 'success', :old_url => old_url, :new_url => new_url}.to_json}
       end
     else
       session[:current_user]['head_picture']=new_url
       respond_to do |format|
         format.js
         format.html
-        format.json {render :json => {:old_url => old_url, :new_url => old_url}.to_json}
+        format.json {render :json => {:status => 'error', :old_url => old_url}.to_json}
       end
     end
   end
 
   def send_im_info
+    user = session[:current_user]
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     im = params[:im]
     s_id = params[:sender_id]
     r_id = params[:receiver_id]
@@ -71,6 +96,15 @@ class PersonalHomepageController < ApplicationController
   end
 
   def read_im_info
+    user = session[:current_user]
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     if params[:read_num] == 'one'
       read_one_im_info
     else
@@ -115,7 +149,16 @@ class PersonalHomepageController < ApplicationController
   end
 
   def add_tag
-    user = User.find_by(id: session[:current_user]['id'])
+    u = session[:current_user]
+    unless u
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    user = User.find_by(id: u['id'])
     unless user
       respond_to do |format|
         format.js
@@ -150,7 +193,16 @@ class PersonalHomepageController < ApplicationController
   end
 
   def delete_tag
-    user = User.find_by(id: session[:current_user]['id'])
+    u = session[:current_user]
+    unless u
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    user = User.find_by(id: u['id'])
     unless user
       respond_to do |format|
         format.js
@@ -177,6 +229,15 @@ class PersonalHomepageController < ApplicationController
 
   def update_name
     newname = params[:newname]
+    user = session[:current_user]
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     user_id = session[:current_user]['id']
     if newname == nil or newname==''
       respond_to do |format|
@@ -206,6 +267,15 @@ class PersonalHomepageController < ApplicationController
   end
 
   def update_password
+    u = session[:current_user]
+    unless u
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     password = params[:password]
     password_repeat = params[:password_repeat]
     if password ==nil or password ==''
@@ -224,7 +294,7 @@ class PersonalHomepageController < ApplicationController
       end
       return
     end
-    user = User.find_by(id: session[:current_user]['id'])
+    user = User.find_by(id: u['id'])
     unless user
       respond_to do |format|
         format.js
@@ -242,6 +312,15 @@ class PersonalHomepageController < ApplicationController
   end
 
   def follow
+    u = session[:current_user]
+    unless u
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     user_id = params[:user_id]
     follower_id = params[:follower_id]
     user = User.find_by(id: user_id)
@@ -279,6 +358,15 @@ class PersonalHomepageController < ApplicationController
   end
 
   def unfollow
+    u = session[:current_user]
+    unless u
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     user_id = params[:user_id]
     follower_id = params[:follower_id]
     user = User.find_by(id: user_id)

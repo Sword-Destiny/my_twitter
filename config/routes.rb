@@ -46,6 +46,8 @@ Rails.application.routes.draw do
 
   post 'sessions/delete_tag'
 
+  post 'sessions/delete_tweet'
+
   post 'sessions/reply_comment'
 
   post 'sessions/reply_top_comment'

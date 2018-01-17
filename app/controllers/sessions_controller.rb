@@ -84,20 +84,20 @@ class SessionsController < ApplicationController
       return
     end
     user = session[:current_user]
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     tweet = Tweet.find_by(id: tweet_id)
     unless tweet
       respond_to do |format|
         format.js
         format.html
         format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
-      end
-      return
-    end
-    if user == nil
-      respond_to do |format|
-        format.js
-        format.html
-        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
       end
       return
     end
@@ -130,20 +130,20 @@ class SessionsController < ApplicationController
       return
     end
     user = session[:current_user]
+    if user == nil
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
     tweet = Tweet.find_by(id: tweet_id)
     unless tweet
       respond_to do |format|
         format.js
         format.html
         format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
-      end
-      return
-    end
-    if user == nil
-      respond_to do |format|
-        format.js
-        format.html
-        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
       end
       return
     end
@@ -177,19 +177,19 @@ class SessionsController < ApplicationController
     comment_id = params[:comment_id]
     comment = Comment.find_by(id: comment_id)
     user = session[:current_user]
-    unless comment
-      respond_to do |format|
-        format.js
-        format.html
-        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
-      end
-      return
-    end
     if user == nil
       respond_to do |format|
         format.js
         format.html
         format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    unless comment
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原评论已不存在'}.to_json}
       end
       return
     end
@@ -218,7 +218,7 @@ class SessionsController < ApplicationController
   end
 
   def add_tag
-    user = User.find_by(id: session[:current_user]['id'])
+    user = session[:current_user]
     unless user
       respond_to do |format|
         format.js
@@ -246,7 +246,7 @@ class SessionsController < ApplicationController
       end
       return
     end
-    if tweet[:user_id] != user[:id]
+    if tweet[:user_id] != user['id']
       respond_to do |format|
         format.js
         format.html
@@ -270,6 +270,36 @@ class SessionsController < ApplicationController
     end
   end
 
+  def delete_tweet
+    tweet_id = params[:tweet_id]
+    tweet = Tweet.find_by(id: tweet_id)
+    unless tweet
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '原动态已不存在'}.to_json}
+      end
+      return
+    end
+    user = session[:current_user]
+    unless user
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
+      end
+      return
+    end
+    if tweet[:user_id]!=user[:id]
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '这不是你发表的动态,你没有权限删除'}.to_json}
+      end
+      return
+    end
+  end
+
   def delete_tag
     tag_id = params[:tag_id]
     tag = TweetTag.find_by(id: tag_id)
@@ -281,7 +311,7 @@ class SessionsController < ApplicationController
       end
       return
     end
-    user = User.find_by(id: session[:current_user]['id'])
+    user = session[:current_user]
     unless user
       respond_to do |format|
         format.js
@@ -299,7 +329,7 @@ class SessionsController < ApplicationController
       end
       return
     end
-    if user[:id] != tweet[:user_id]
+    if user['id'] != tweet[:user_id]
       respond_to do |format|
         format.js
         format.html
