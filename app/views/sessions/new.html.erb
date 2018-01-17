@@ -57,7 +57,12 @@
       tweets_list.each do |it|
     %>
         <div id="tweet_<%= it[:tweet][:id] %>" class="tweet">
-          <p><%= it[:username] %> :</p>
+          <p>
+            <% if it[:recommend] %>
+                <span style="color: red">推荐 -> </span>
+            <% end %>
+            <%= it[:username] %> :
+          </p>
           <div id="tweet_contents_<%= it[:tweet][:id] %>" class="tweet_contents">
             <%= raw it[:tweet][:contents] %>
           </div>

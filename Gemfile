@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
+# 定时任务
+gem 'whenever', :require => false
 # rmagick
 gem 'mini_magick'
 # Use KindEditor

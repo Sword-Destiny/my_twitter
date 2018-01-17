@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171218045518) do
+ActiveRecord::Schema.define(version: 20180117020040) do
 
   create_table "comment_thumbs_ups", force: :cascade do |t|
     t.integer  "comment_id"
@@ -39,11 +39,24 @@ ActiveRecord::Schema.define(version: 20171218045518) do
     t.datetime "updated_at",  null: false
   end
 
+  create_table "hot_recommends", force: :cascade do |t|
+    t.integer  "tweet_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "im_infos", force: :cascade do |t|
     t.integer  "from"
     t.integer  "to"
     t.string   "info"
     t.integer  "read"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "tag_recommends", force: :cascade do |t|
+    t.integer  "tweet_id"
+    t.integer  "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

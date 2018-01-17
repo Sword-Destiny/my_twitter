@@ -11,22 +11,34 @@ class Tweet < ActiveRecord::Base
       recommend_tweets = Tweet.get_recommend_tweets(user_id)
       process_tweets(user_tweets, recommend_tweets, user_id)
     else
-      Tweet.get_recommend_tweets(user_id)
+      process_tweets([], Tweet.get_recommend_tweets(user_id), user_id)
     end
   end
 
   def Tweet.process_tweets(tweets, recommends, user_id)
     tweets_list = []
+    recommends.each do |tweet|
+      thumbsup = TweetThumbsUp.find_thumbs_up(user_id, tweet[:id])
+      user = User.find_by(id: tweet[:user_id])
+      tags = TweetTag.list_tags(tweet[:id])
+      if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
+        tweets_list.push({:recommend => true, :tags => tags, :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
+      else
+        transmit_tweet = Tweet.find_by(id: tweet[:transmit_from_id])
+        transmit_name = User.find_by(id: transmit_tweet[:user_id])[:name]
+        tweets_list.push({:recommend => true, :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
+      end
+    end
     tweets.each do |tweet|
       thumbsup = TweetThumbsUp.find_thumbs_up(user_id, tweet[:id])
       user = User.find_by(id: tweet[:user_id])
       tags = TweetTag.list_tags(tweet[:id])
       if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
-        tweets_list.push({:tags => tags, :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
+        tweets_list.push({:recommend => false, :tags => tags, :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
       else
         transmit_tweet = Tweet.find_by(id: tweet[:transmit_from_id])
         transmit_name = User.find_by(id: transmit_tweet[:user_id])[:name]
-        tweets_list.push({:username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
+        tweets_list.push({:recommend => false, :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
       end
     end
     tweets_list
@@ -87,6 +99,6 @@ class Tweet < ActiveRecord::Base
 
   # TODO 获取推荐内容,返回两条
   def Tweet.get_recommend_tweets(user_id)
-    []
+    Tweet.where('id in (select tweet_id from hot_recommends)') + Tweet.where('id in (select tweet_id from tag_recommends where user_id = ?)', user_id)
   end
 end
