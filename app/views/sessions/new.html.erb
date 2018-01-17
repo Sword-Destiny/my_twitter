@@ -2,6 +2,11 @@
   <h3>project one</h3>
   <%
     cu = session[:current_user]
+    if cu
+      user_id = cu['id']
+    else
+      user_id = -1
+    end
   %>
   <table border="0">
     <tr>
@@ -22,7 +27,7 @@
       <% if cu %>
           <td>
             <div>
-              <a href="/personal_homepage/new?home_user_id=<%= cu['id'] %>">
+              <a href="/personal_homepage/new?home_user_id=<%= user_id %>">
                 <img src="<%= cu['head_picture'] %>">
               </a>
             </div>
@@ -43,12 +48,6 @@
   </p>
   <div id="tweets" class="tweets">
     <%
-      if cu
-        user_id = cu['id']
-      else
-        user_id = -1
-      end
-
       if params[:search] == '1'
         tweets_list = Tweet.search_tweet(user_id, params[:keyword])
       else
@@ -63,7 +62,7 @@
             <%= raw it[:tweet][:contents] %>
           </div>
           <% if it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
-              <% if cu['id'] == it[:tweet][:user_id] %>
+              <% if user_id == it[:tweet][:user_id] %>
                   <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
                     <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
                       <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
@@ -120,9 +119,12 @@
             <span id="comment_num_<%= it[:tweet][:id] %>">评论:<%= it[:tweet][:comment_num] %></span>
             <button id="transmit_btn_<%= it[:tweet][:id] %>" class="transmit_btn">转发</button>
             <span><%= it[:tweet][:transmit_num] %></span>
+            <% if user_id == it[:tweet][:user_id] %>
+                <button id="delete_tweet_btn_<%= it[:tweet][:id] %>" class="delete_tweet_btn" type="button">删除动态</button>
+            <% end %>
           </p>
           <%
-            comments_list = Comment.list_comments(it[:tweet][:id], cu['id'])
+            comments_list = Comment.list_comments(it[:tweet][:id], user_id)
             comments_list.each do |item|
           %>
               <div id="div_comment_<%= item[:top_comment][:id] %>">
@@ -179,6 +181,32 @@
         });
     });
     $(document).ready(function () {
+
+        $('.delete_tweet_btn').click(function (param) {
+            var tweet_id = param.target.id.substr(16);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/delete_tweet",
+                data: {"tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = '/sessions/new';
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        });
 
         $('#search_btn').click(function () {
             var keyword = document.getElementById("input_search").value.toString();
