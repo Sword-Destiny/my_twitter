@@ -5,7 +5,7 @@ class TagRecommend < ActiveRecord::Base
     usertags = UserTag.select('distinct user_id')
     usertags.each do |user_tag|
       tweet_tags = TweetTag.where('tag in (select tag from user_tags where user_id = ?)', user_tag[:user_id])
-      tweet_count = tweet_tags.group(:tweet_id).count(:tweet_id)
+      tweet_count = tweet_tags.group(:tweet_id).count
       tweet_id = -1
       max_count_tweet_id = 0
       tweet_count.each do |(key,value)|
