@@ -34,5 +34,14 @@
         <property name="enable_load_extension" value="true" />
       </driver-properties>
     </data-source>
+    <data-source source="LOCAL" name="my_twitter_development@localhost" uuid="d751ac00-3bcc-4d35-a6c4-830c9c9d9b25">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5433/my_twitter_development</jdbc-url>
+      <driver-properties>
+        <property name="ApplicationName" value="DataGrip" />
+      </driver-properties>
+    </data-source>
   </component>
 </project>

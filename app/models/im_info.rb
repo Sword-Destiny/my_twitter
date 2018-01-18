@@ -14,7 +14,7 @@ class ImInfo < ActiveRecord::Base
     unless receiver
       false
     end
-    if ImInfo.where('`to` = ?', receiver_id).update_all('read = 1')
+    if ImInfo.where('"to" = ?', receiver_id).update_all('read = 1')
       receiver.update_attribute(:unread_info_num, 0)
     end
   end
@@ -34,7 +34,7 @@ class ImInfo < ActiveRecord::Base
   end
 
   def ImInfo.list_all_unread_im_info(receiver_id)
-    infos = ImInfo.where('`to` = ? and `read` = 0', receiver_id).order('`from`')
+    infos = ImInfo.where('"to" = ? and read = 0', receiver_id).order('"from"')
     im_infos = []
     if infos.length>0
       from = infos[0][:from]

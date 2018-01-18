@@ -54,7 +54,6 @@
     <orderEntry type="library" scope="PROVIDED" name="sdoc (v0.4.2, ruby-2.3.1-p112) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="spring (v2.0.2, ruby-2.3.1-p112) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets (v3.7.1, ruby-2.3.1-p112) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="sqlite3 (v1.3.13, ruby-2.3.1-p112) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thread_safe (v0.3.6, ruby-2.3.1-p112) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tilt (v2.0.5, ruby-2.3.1-p112) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="turbolinks (v5.0.1, ruby-2.3.1-p112) [gem]" level="application" />
