@@ -12,6 +12,15 @@ class PersonalHomepageController < ApplicationController
       end
       return
     end
+    upload = params[:img_upload]
+    unless upload
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '请选择文件'}.to_json}
+      end
+      return
+    end
     file = File.read(params[:img_upload].path)
     unless file
       respond_to do |format|
