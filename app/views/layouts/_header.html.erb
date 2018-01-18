@@ -1,0 +1,19 @@
+<header class="navbar navbar-fixed-top">
+  <div class="top-line"></div>
+  <div class="header container">
+    <div class="logo">
+      <%= link_to image_tag("header_logo.png", alt: "My Twitter Logo"), root_path %>
+    </div>
+    <div class="search">
+      <input type="text" class="inputs" value="试试搜索吧！" onfocus="{value =''}" onblur="if (value ==''){value='试试搜索吧！'}" name="q" autocomplete="off">
+      <a href="javascript:void(0);" class="fa fa-search"></a>
+      <br class="empty" />
+    </div>
+    <nav>
+      <ul class="nav navbar-nav navbar-right">
+        <li>登录</li>
+        <li>注册</li>
+      </ul>
+    </nav>
+  </div>
+</header>

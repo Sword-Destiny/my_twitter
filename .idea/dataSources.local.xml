@@ -19,13 +19,7 @@
       <introspection-schemas>*:main</introspection-schemas>
     </data-source>
     <data-source name="my_twitter_development@localhost" uuid="d751ac00-3bcc-4d35-a6c4-830c9c9d9b25">
-      <database-info product="PostgreSQL" version="10.1" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.1.1">
-        <identifier-quote-string>&quot;</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
-      <secret-storage>master_key</secret-storage>
-      <user-name>postgres</user-name>
-      <introspection-schemas>my_twitter_development:public</introspection-schemas>
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
     </data-source>
   </component>
 </project>
