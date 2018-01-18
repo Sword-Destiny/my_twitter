@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root :to => 'sessions#new'
 
   get 'personal_homepage/new'
 
@@ -17,8 +18,6 @@ Rails.application.routes.draw do
   post 'personal_homepage/follow'
 
   post 'personal_homepage/unfollow'
-
-  root :to => 'sessions#new'
 
   get 'sessions/new'
 
