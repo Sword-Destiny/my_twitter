@@ -20,6 +20,7 @@
     </data-source>
     <data-source name="my_twitter_development@localhost" uuid="d751ac00-3bcc-4d35-a6c4-830c9c9d9b25">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+      <introspection-schemas>my_twitter_development:public</introspection-schemas>
     </data-source>
   </component>
 </project>
