@@ -115,9 +115,15 @@
               <% end %>
               <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
                   <p>转发自:<%= it[:transmit_name] %></p>
-                  <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
-                    <%= raw it[:transmit_tweet][:contents] %>
-                  </div>
+                  <% if it[:transmit_tweet] == nil %>
+                      <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_" class="transmit_tweet_contents">
+                        原动态已删除
+                      </div>
+                  <% else %>
+                      <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
+                        <%= raw it[:transmit_tweet][:contents] %>
+                      </div>
+                  <% end %>
               <% end %>
               <p id="b_p_tweet_<%= it[:tweet][:id] %>" class="b_p_tweet">
                 <% if it[:thumbsup] %>
