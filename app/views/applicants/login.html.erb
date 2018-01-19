@@ -1,0 +1,20 @@
+<%
+  cu = session[:current_user]
+  if cu
+    user_id = cu['id']
+  else
+    user_id = -1
+  end
+%>
+<div id="login_container">
+  <div id="login_div">
+    <input type="text" id="name" class="name" placeholder="Name">
+    <input type="password" placeholder="Password" class="password" id="password">
+    <% if user_id == -1 %>
+        <button type="button" id="login" class="login">登录</button>
+    <% else %>
+        <button type="button" id="login" class="login">切换用户</button>
+        <button type="button" id="logout" class="logout">退出</button>
+    <% end %>
+  </div>
+</div>

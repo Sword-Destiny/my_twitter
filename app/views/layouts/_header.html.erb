@@ -1,3 +1,11 @@
+<%
+  cu = session[:current_user]
+  if cu
+    user_id = cu['id']
+  else
+    user_id = -1
+  end
+%>
 <header class="navbar navbar-fixed-top">
   <div class="top-line"></div>
   <div class="header container">
@@ -5,15 +13,89 @@
       <%= link_to image_tag("header_logo.png", alt: "My Twitter Logo"), root_path %>
     </div>
     <div class="search">
-      <input type="text" class="inputs" value="试试搜索吧！" onfocus="{value =''}" onblur="if (value ==''){value='试试搜索吧！'}" name="q" autocomplete="off">
-      <a href="javascript:void(0);" class="fa fa-search"></a>
+      <input type="text" id="input_search" class="input_search inputs" placeholder="试试搜索吧！" autocomplete="off">
+      <btn class="fa fa-search search_btn" id="search_btn"></btn>
       <br class="empty" />
     </div>
     <nav>
-      <ul class="nav navbar-nav navbar-right">
-        <li>登录</li>
-        <li>注册</li>
+      <ul>
+        <% if user_id == -1 %>
+            <li type="button" id="login_href" class="login_href">登录</li>
+            <li type="button" id="register">注册</li>
+        <% else %>
+            <li type="button" id="login_href" class="login_href">切换用户</li>
+            <li type="button" id="logout" class="logout">退出</li>
+        <% end %>
       </ul>
     </nav>
   </div>
 </header>
+<script>
+    $(document).ready(function () {
+        $('#search_btn').click(function () {
+            var keyword = document.getElementById("input_search").value.toString();
+            window.location.href = "/sessions/new?search=1&keyword=" + keyword;
+        });
+        $('#login_href').click(function () {
+            window.location.href="/applicants/login";
+        });
+        $('#register').click(function () {
+            window.location.href="/applicants/new";
+        });
+        $('#login').click(function () {
+            var name = document.getElementById("name").value.toString();
+            var password = document.getElementById("password").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/create",
+                data: {"name": name, "password": password},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        $('#name').val('').attr("placeholder", data.info);
+                        $('#password').val('').attr("placeholder", "Password");
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+        $('#logout').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/logout",
+                data: {},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        alert(data.info);
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+    });
+</script>

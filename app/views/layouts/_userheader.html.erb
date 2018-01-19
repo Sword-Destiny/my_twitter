@@ -1,8 +1,46 @@
-<div id="userheader">
-  <div class="user-photo">
-    <img src="" alt="avatar">
+<%
+  @home_user_id = params[:home_user_id]
+  @home_user = User.get_user(params[:home_user_id])
+  cu = session[:current_user]
+  if cu
+    user_id = cu['id']
+  else
+    user_id = -1
+  end
+%>
+<div id="userheader-container">
+  <div id="userheader">
+    <div class="user-photo">
+      <% if cu %>
+          <td>
+            <div>
+              <% if @home_user.nil? %>
+                  <a href="/personal_homepage/new?home_user_id=<%= user_id %>">
+                    <img src="<%= cu['head_picture'] %>" alt="avatar">
+                  </a>
+              <% else %>
+                  <a href="/personal_homepage/new?home_user_id=<%= @home_user_id %>">
+                    <img src="<%= @home_user['head_picture'] %>" alt="avatar">
+                  </a>
+              <% end %>
+            </div>
+          </td>
+      <% end %>
+    </div>
+    <div class="user-name">
+      <h1>
+        <% if @home_user.nil? %>
+            <%= cu['name'] %>
+        <% else %>
+            <%= @home_user['name'] %>
+        <% end %>
+      </h1>
+    </div>
   </div>
-  <div class="user-name">
-    <h1>被虐哭也要继续努力的琪酱</h1>
+  <div class="user_banner">
+    <ul>
+      <li type="button" id="user_page">主页</li>
+      <li type="button" id="user_info">信息</li>
+    </ul>
   </div>
 </div>

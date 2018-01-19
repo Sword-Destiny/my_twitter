@@ -27,6 +27,8 @@ Rails.application.routes.draw do
 
   get 'applicants/new'
 
+  get 'applicants/login'
+
   post 'applicants/create'
 
   post 'sessions/post_tweet'
