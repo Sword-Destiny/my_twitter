@@ -5,15 +5,13 @@
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application.js', 'data-turbolinks-track': 'reload' %>
     <%= render 'layouts/shim' %>
   </head>
 
   <body>
     <div id="container">
       <%= render 'layouts/header' %>
-      <%= render 'layouts/userheader' %>
-      <%= yield %>
       <%= yield %>
     </div>
     <%= render 'layouts/footer' %>

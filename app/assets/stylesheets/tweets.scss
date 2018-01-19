@@ -1,0 +1,20 @@
+#tweets {
+  width: 65%;
+  margin: 0 auto;
+
+  .tweet {
+    background-color: white;
+    border-radius: 3px;
+    margin-top: 5px;
+
+    #user-avatar {
+      float: left;
+    }
+    #tweet-info {
+      float: left;
+    }
+    .empty {
+      clear: both;
+    }
+  }
+}
