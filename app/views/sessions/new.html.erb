@@ -41,6 +41,17 @@
                     <img class="head_picture" src="<%= cu['head_picture'] %>">
                   </a>
                 </td>
+                <td>
+                  <span></span>
+                </td>
+                <% if cu['unread_info_num'].to_i > 0 %>
+                    <td>
+                      <img class="new_mail" src="/pictures/new-message.png">
+                    </td>
+                    <td>
+                      <span class="red_unread_num"><%= cu['unread_info_num'] %></span>
+                    </td>
+                <% end %>
             <% end %>
             <td class="empty_span">
               <span></span>
@@ -77,7 +88,7 @@
     <textarea id="content"></textarea>
   </div>
   <p>
-    <button type="button" id='post_tweet_btn' class='post_tweet_btn'>发布</button>
+    <button type="button" id='post_tweet_btn' class='post_tweet_btn'>发布动态</button>
   </p>
   <div id="tweets" class="tweets">
     <%
@@ -281,6 +292,7 @@
                 div.removeChild(div.firstChild);
             }
             document.getElementById("div_content").innerHTML = '<textarea id="content"></textarea>';
+
             window.editor = KindEditor.create('#content', {
                 afterBlur: function () {
                     this.sync();
@@ -345,7 +357,7 @@
                         var img = document.createElement('img');
                         img.id = "delete_tweet_tag_btn_" + data.id;
                         img.setAttribute("class", "delete_tweet_tag_btn");
-                        img.setAttribute("src","/pictures/delete.png");
+                        img.setAttribute("src", "/pictures/delete.png");
                         img.onclick = delete_tweet_tag;
 
                         subtd.appendChild(img);
@@ -910,6 +922,9 @@
         $('.logo').click(function () {
             window.location.href = "/sessions/new";
         });
+        $('.new_mail').click(function () {
+            window.location.href = "/personal_homepage/new?home_user_id=<%= user_id%>#new_mail";
+        })
     });
 </script>
 <footer class="footer">

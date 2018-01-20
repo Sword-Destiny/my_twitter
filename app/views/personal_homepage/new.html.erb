@@ -46,6 +46,17 @@
                     <img class="head_picture" src="<%= cu['head_picture'] %>">
                   </a>
                 </td>
+                <td>
+                  <span></span>
+                </td>
+                <% if cu['unread_info_num'].to_i > 0 %>
+                    <td>
+                      <img class="new_mail" src="/pictures/new-message.png">
+                    </td>
+                    <td>
+                      <span class="red_unread_num"><%= cu['unread_info_num'] %></span>
+                    </td>
+                <% end %>
             <% end %>
             <td class="empty_span">
               <span></span>
@@ -168,7 +179,7 @@
         <%
           if tags.empty?
         %>
-        空
+            空
         <%
           end
         %>
@@ -191,6 +202,7 @@
     <% end %>
   </div>
   <br>
+  <a id="new_mail"></a>
   <div class="personal_ims">
     <%
       if cu['id'].to_s == @home_user_id
@@ -584,7 +596,7 @@
         $('#update_name_btn').click(function () {
             var name = document.getElementById('newname').value.toString();
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "/personal_homepage/update_name",
                 data: {"newname": name},
                 dataType: "json",
@@ -697,6 +709,9 @@
         $('.logo').click(function () {
             window.location.href = "/sessions/new";
         });
+        $('.new_mail').click(function () {
+            window.location.href = "/personal_homepage/new?home_user_id=<%= user_id%>#new_mail";
+        })
     });
 </script>
 <footer class="footer">

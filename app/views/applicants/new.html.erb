@@ -42,6 +42,17 @@
                     <img class="head_picture" src="<%= cu['head_picture'] %>">
                   </a>
                 </td>
+                <td>
+                  <span></span>
+                </td>
+                <% if cu['unread_info_num'].to_i > 0 %>
+                    <td>
+                      <img class="new_mail" src="/pictures/new-message.png">
+                    </td>
+                    <td>
+                      <span class="red_unread_num"><%= cu['unread_info_num'] %></span>
+                    </td>
+                <% end %>
             <% end %>
             <td class="empty_span">
               <span></span>
@@ -188,6 +199,9 @@
         $('.logo').click(function () {
             window.location.href = "/sessions/new";
         });
+        $('.new_mail').click(function () {
+            window.location.href = "/personal_homepage/new?home_user_id=<%= user_id%>#new_mail";
+        })
     });
 </script>
 <footer class="footer">

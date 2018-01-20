@@ -289,6 +289,17 @@ footer h1 {
     cursor: pointer;
 }
 
+header .new_mail{
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+header .red_unread_num{
+    color: red;
+    font-size: 20px;
+}
+
 #tweets .tweet #user-avatar {
     float: left;
 }
@@ -408,3 +419,16 @@ footer h1 {
 #personal_main .from_user_im{
     margin-left: 20px;
 }
+
+#personal_main .tag_btn{
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+}
+
+#personal_main .tag_btn:hover{
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+}
+
