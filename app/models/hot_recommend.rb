@@ -9,7 +9,7 @@ class HotRecommend < ActiveRecord::Base
     hash.each do |(key, value)|
       t = Tweet.find_by(id: key)
       if t
-        v = (value>0 ? value : 1) * (t[:transmit_num]>0 ? t[:transmit_num] : 1)
+        v = (value>0 ? value : 1) * (t[:transmit_num]>0 ? t[:transmit_num] : 1) * (t[:comment_num]>0 ? t[:comment_num] : 1)
         if v> max_tweet_hot
           max_tweet_hot=v
           tweet_id=key
