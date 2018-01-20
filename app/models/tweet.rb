@@ -111,7 +111,7 @@ class Tweet < ActiveRecord::Base
   end
 
   def Tweet.delete_tweet(tweet_id)
-    Tweet.delete_all(['id = ?', tweet_id]) and Comment.delete_all(['tweet_id = ?', tweet_id]) and TweetTag.delete_all(['tweet_id = ?', tweet_id]) and TweetThumbsUp.delete_all(['tweet_id = ?', tweet_id])
+    Tweet.where('id = ?', tweet_id).delete_all and Comment.where('tweet_id = ?', tweet_id).delete_all and TweetTag.where('tweet_id = ?', tweet_id).delete_all and TweetThumbsUp.where('tweet_id = ?', tweet_id).delete_all
   end
 
   # TODO 获取推荐内容,返回最多两条,去重

@@ -11,7 +11,7 @@ class UserTag < ActiveRecord::Base
 
   # 删除标签
   def UserTag.delete_user_tag(tag_id, user)
-    UserTag.delete_all(['id = ? and user_id = ?', tag_id, user[:id]])
+    UserTag.where('id = ? and user_id = ?', tag_id, user[:id]).delete_all
   end
 
   def UserTag.list_tags(user_id)

@@ -16,7 +16,7 @@ class Follow < ActiveRecord::Base
   end
 
   def Follow.delete_follow(user_id, follower_id)
-    Follow.delete_all(['user_id = ? and follower_id = ?', user_id, follower_id])
+    Follow.where('user_id = ? and follower_id = ?', user_id, follower_id).delete_all
   end
 
   def Follow.is_follow(user_id, follower_id)

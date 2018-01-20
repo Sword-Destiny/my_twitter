@@ -27,7 +27,7 @@ class CommentThumbsUp < ActiveRecord::Base
     unless CommentThumbsUp.where('user_id = ? and comment_id = ?', user_id, comment[:id]).length > 0
       return false, 1 # 没点过赞
     end
-    if CommentThumbsUp.delete_all(['user_id = ? and comment_id = ?', user_id, comment[:id]])
+    if CommentThumbsUp.where('user_id = ? and comment_id = ?', user_id, comment[:id]).delete_all
       comment.update_attributes(:thumbs_up_num => comment[:thumbs_up_num]-1)
       return true, 0
     else

@@ -11,7 +11,7 @@ class TweetTag < ActiveRecord::Base
 
   # 删除标签
   def TweetTag.delete_tweet_tag(tag_id, tweet)
-    TweetTag.delete_all(['id = ? and tweet_id = ?', tag_id, tweet[:id]])
+    TweetTag.where('id = ? and tweet_id = ?', tag_id, tweet[:id]).delete_all
   end
 
   def TweetTag.list_tags(tweet_id)

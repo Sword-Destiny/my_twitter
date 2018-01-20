@@ -26,7 +26,7 @@ class TweetThumbsUp < ActiveRecord::Base
     unless TweetThumbsUp.where('user_id = ? and tweet_id = ?', user_id, tweet[:id]).length > 0
       return false, 1 # 没点过赞
     end
-    if TweetThumbsUp.delete_all(['user_id = ? and tweet_id = ?', user_id, tweet[:id]])
+    if TweetThumbsUp.where('user_id = ? and tweet_id = ?', user_id, tweet[:id]).delete_all
       tweet.update_attributes(:thumbs_up_num => tweet[:thumbs_up_num]-1)
       return true, 0
     else

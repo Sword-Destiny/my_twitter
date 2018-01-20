@@ -16,7 +16,7 @@ class HotRecommend < ActiveRecord::Base
         end
       end
     end
-    HotRecommend.delete_all([])
+    HotRecommend.delete_all
     hr = HotRecommend.new
     hr[:tweet_id] = tweet_id
     hr.save

@@ -39,7 +39,7 @@ class Comment < ActiveRecord::Base
     comment = Comment.find_by(id: comment_id)
     if comment
       # 删除可能会失败
-      Comment.delete_all('id = ? or top_comment_id = ?', comment_id, comment_id)
+      Comment.where('id = ? or top_comment_id = ?', comment_id, comment_id).delete_all
     else
       false #评论不存在
     end
