@@ -21,15 +21,17 @@ Rails.application.routes.draw do
 
   post 'personal_homepage/unfollow'
 
+
+  get 'applicants/new'
+
+  post 'applicants/create'
+
+
   get 'sessions/new'
 
   post 'sessions/create'
 
   post 'sessions/logout'
-
-  get 'applicants/new'
-
-  post 'applicants/create'
 
   post 'sessions/post_tweet'
 

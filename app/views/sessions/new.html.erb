@@ -293,7 +293,8 @@
             }
             document.getElementById("div_content").innerHTML = '<textarea id="content"></textarea>';
 
-            window.editor = KindEditor.create('#content', {
+            window.editor = KindEditor.create('textarea[id="content"]', {
+                "items":["fontname","fontsize","|","forecolor","hilitecolor","bold","italic","underline","removeformat","|","justifyleft","justifycenter","justifyright","insertorderedlist","insertunorderedlist","|","emoticons","image","link"],
                 afterBlur: function () {
                     this.sync();
                 }
