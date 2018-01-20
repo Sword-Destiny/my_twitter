@@ -57,35 +57,23 @@ class SessionsController < ApplicationController
   end
 
   def post_tweet
+    session[:post] = '1'
     if params[:content] == nil or params[:content] == ''
-      respond_to do |format|
-        format.js
-        format.html
-        format.json {render :json => {:status => 'error', :info => '文本内容为空'}.to_json}
-      end
+      session[:post_error] = '文本内容为空'
+      redirect_to '/sessions/new'
       return
     end
     user = session[:current_user]
     if user == nil
-      respond_to do |format|
-        format.js
-        format.html
-        format.json {render :json => {:status => 'error', :info => '请先登录'}.to_json}
-      end
+      session[:post_error] = '请先登录'
+      redirect_to '/sessions/new'
     else
       t = Tweet.add_tweet(user['id'], params[:content])
       if t
-        respond_to do |format|
-          format.js
-          format.html
-          format.json {render :json => {:status => 'success', :info => '成功'}.to_json}
-        end
+        redirect_to '/sessions/new' # 成功
       else
-        respond_to do |format|
-          format.js
-          format.html
-          format.json {render :json => {:status => 'error', :info => '失败'}.to_json}
-        end
+        session[:post_error] = '存储数据库出错'
+        redirect_to '/sessions/new'
       end
     end
   end

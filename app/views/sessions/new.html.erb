@@ -85,13 +85,18 @@
 <br>
 <div id="main" class="main">
   <div id="div_content">
-    <textarea id="content"></textarea>
+    <%= form_for :session, url: :sessions_post_tweet do |f| %>
+        <%= kindeditor_tag :content, '', :simple_mode => true %>
+        <% if session[:post] and session[:post_error] %>
+            <textarea id="post_error">error: <%= session[:post_error] %></textarea>
+        <% end %>
+        <p><%= f.button '发布', :id => 'post_tweet_btn', :class => 'post_tweet_btn' %></p>
+    <% end %>
   </div>
-  <p>
-    <button type="button" id='post_tweet_btn' class='post_tweet_btn'>发布动态</button>
-  </p>
   <div id="tweets" class="tweets">
     <%
+      session[:post]=nil
+      session[:post_error] = nil
       if params[:search] == '1'
         tweets_list = Tweet.search_tweet(user_id, params[:keyword])
         if tweets_list.length==0
@@ -286,20 +291,6 @@
 </div>
 <script>
     $(document).ready(function () {
-        KindEditor.ready(function (K) {
-            var div = document.getElementById("div_content");
-            while (div.hasChildNodes()) {
-                div.removeChild(div.firstChild);
-            }
-            document.getElementById("div_content").innerHTML = '<textarea id="content"></textarea>';
-
-            window.editor = KindEditor.create('textarea[id="content"]', {
-                "items":["fontname","fontsize","|","forecolor","hilitecolor","bold","italic","underline","removeformat","|","justifyleft","justifycenter","justifyright","insertorderedlist","insertunorderedlist","|","emoticons","image","link"],
-                afterBlur: function () {
-                    this.sync();
-                }
-            });
-        });
         $('.delete_tweet_btn').click(function (param) {
             var tweet_id = param.target.id.substr(17);
             $.ajax({
@@ -830,31 +821,6 @@
                     } else {
                         document.getElementById("post_comment_" + tweet_id).setAttribute("value", "");
                         document.getElementById("post_comment_" + tweet_id).setAttribute("placeholder", data.info);
-                    }
-                }
-            });
-        });
-        $('#post_tweet_btn').click(function () {
-            var content = document.getElementById("content").value.toString();
-            $.ajax({
-                type: "POST",
-                url: "/sessions/post_tweet",
-                data: {"content": content},
-                dataType: "json",
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    //alert(JSON.stringify(XMLHttpRequest));
-                    //alert(textStatus);
-                    alert(errorThrown);
-                    //alert("失败");
-                },
-                success: function (data, textStatus) {
-                    //alert(JSON.stringify(data));
-                    //alert(textStatus);
-                    var status = data.status.toString();
-                    if ("success" === status) {
-                        window.location.href = "/sessions/new";
-                    } else {
-                        alert(data.info);
                     }
                 }
             });

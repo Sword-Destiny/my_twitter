@@ -4,7 +4,7 @@ class Tweet < ActiveRecord::Base
   def Tweet.list_tweets(user_id)
     if user_id!=-1
       my_tweets = Tweet.where('user_id = ?', user_id)
-      follow_tweets = Tweet.where('user_id in (select id from follows where follower_id = ?)', user_id)
+      follow_tweets = Tweet.where('user_id in (select user_id from follows where follower_id = ?)', user_id)
       user_tweets = my_tweets + follow_tweets
       user_tweets.sort_by! {|t| t[:created_at]}
       user_tweets.reverse!

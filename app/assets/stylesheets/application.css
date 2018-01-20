@@ -151,6 +151,10 @@ footer h1 {
     margin-right: 20px;
 }
 
+.tweet .tweet_contents img {
+    max-width: 100%;
+}
+
 .tweet .transmit_tweet_contents {
     background: #d8d5dc;
     border-radius: 5px;
@@ -238,7 +242,11 @@ footer h1 {
     float: right;
     margin-right: 20px;
     margin-top: 5px;
+    cursor: pointer;
+    background: red;
+    color: white;
     margin-bottom: 5px;
+    font-size: 16px;
 }
 
 .tweet .d_comment {
@@ -321,6 +329,10 @@ header .red_unread_num{
 #main #content {
     width: 100%;
     height: 250px;
+}
+
+#main #post_error{
+    color: red;
 }
 
 #main .post_tweet_btn {

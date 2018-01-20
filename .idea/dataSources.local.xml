@@ -1,26 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="Rails project_one: development" uuid="04e87dab-11f6-4470-91ce-85359aad7a73">
+    <data-source name="development.sqlite3" uuid="38a5307f-a094-441a-b3e0-52e56c8a1251">
       <database-info product="SQLite" version="3.16.1" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
       <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>master_key</secret-storage>
       <auth-required>false</auth-required>
       <introspection-schemas>*:main</introspection-schemas>
-    </data-source>
-    <data-source name="Rails project_one: test" uuid="ec96d15b-7a40-42c5-be28-14708145de3f">
-      <database-info product="SQLite" version="3.16.1" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
-      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
-      <introspection-schemas>*:main</introspection-schemas>
-    </data-source>
-    <data-source name="Rails project_one: production" uuid="ab2ad24b-0d35-486c-a9af-2329cf06e6d1">
-      <database-info product="SQLite" version="3.16.1" jdbc-version="2.1" driver-name="SQLiteJDBC" driver-version="native" />
-      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
-      <auth-required>false</auth-required>
-      <introspection-schemas>*:main</introspection-schemas>
-    </data-source>
-    <data-source name="my_twitter_development@localhost" uuid="d751ac00-3bcc-4d35-a6c4-830c9c9d9b25">
-      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
-      <introspection-schemas>my_twitter_development:public</introspection-schemas>
     </data-source>
   </component>
 </project>
