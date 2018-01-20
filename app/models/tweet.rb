@@ -22,15 +22,18 @@ class Tweet < ActiveRecord::Base
       user = User.find_by(id: tweet[:user_id])
       tags = TweetTag.list_tags(tweet[:id])
       if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
-        tweets_list.push({:type => 'tweet', :recommend => true, :tags => tags, :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
+        tweets_list.push({:type => 'tweet', :recommend => true, :tags => tags, :picture => user[:head_picture], :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
       else
         transmit_tweet = Tweet.find_by(id: tweet[:transmit_from_id])
         if transmit_tweet
-          transmit_name = User.find_by(id: transmit_tweet[:user_id])[:name]
-          tweets_list.push({:type => 'tweet', :recommend => true, :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
+          t_u = User.find_by(id: transmit_tweet[:user_id])
+          transmit_name = t_u[:name]
+          t_id = t_u[:id]
+          t_p = t_u[:head_picture]
+          tweets_list.push({:type => 'tweet', :recommend => true, :transmit_picture => t_p, :transmit_uid => t_id, :picture => user[:head_picture], :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
         else
           transmit_name = '已删除'
-          tweets_list.push({:type => 'tweet', :recommend => true, :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
+          tweets_list.push({:type => 'tweet', :recommend => true, :picture => user[:head_picture], :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
         end
       end
     end
@@ -39,15 +42,18 @@ class Tweet < ActiveRecord::Base
       user = User.find_by(id: tweet[:user_id])
       tags = TweetTag.list_tags(tweet[:id])
       if tweet[:transmit_from_id] == -1 or tweet[:transmit_from_id] == '-1'
-        tweets_list.push({:type => 'tweet', :recommend => false, :tags => tags, :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
+        tweets_list.push({:type => 'tweet', :recommend => false, :tags => tags, :picture => user[:head_picture], :username => user[:name], :tweet => tweet, :transmit_name => '', :thumbsup => thumbsup})
       else
         transmit_tweet = Tweet.find_by(id: tweet[:transmit_from_id])
         if transmit_tweet
-          transmit_name = User.find_by(id: transmit_tweet[:user_id])[:name]
-          tweets_list.push({:type => 'tweet', :recommend => false, :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
+          t_u=User.find_by(id: transmit_tweet[:user_id])
+          transmit_name = t_u[:name]
+          t_id = t_u[:id]
+          t_p = t_u[:head_picture]
+          tweets_list.push({:type => 'tweet', :recommend => false, :transmit_picture => t_p, :transmit_uid => t_id, :picture => user[:head_picture], :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
         else
           transmit_name = '已删除'
-          tweets_list.push({:type => 'tweet', :recommend => false, :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
+          tweets_list.push({:type => 'tweet', :recommend => false, :picture => user[:head_picture], :username => user[:name], :tweet => tweet, :transmit_name => transmit_name, :thumbsup => thumbsup, :transmit_tweet => transmit_tweet})
         end
       end
     end

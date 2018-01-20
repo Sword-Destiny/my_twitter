@@ -12,6 +12,14 @@ Thread.new {
   end
 }
 
+# for i in 1..10 do
+#   for j in 1..10 do
+#     f = Follow.new
+#     f[:user_id]=i
+#     f[:follower_id]=j
+#     f.save
+#   end
+# end
 
 def run_thread
   HotRecommend.task

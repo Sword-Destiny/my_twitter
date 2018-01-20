@@ -13,3 +13,398 @@
  *= require_tree .
  *= require_self
  */
+header .input_search {
+    height: 30px;
+    width: 400px;
+    font-size: 14px;
+    border: solid #4fc1e9 1px;
+}
+
+header .table_search {
+    float: left;
+    margin-left: 30px;
+}
+
+header .name {
+    height: 30px;
+    font-size: 14px;
+    border: solid #4fc1e9 1px;
+}
+
+header .password {
+    height: 30px;
+    font-size: 14px;
+    border: solid #4fc1e9 1px;
+}
+
+.logo {
+    cursor: pointer;
+}
+
+.logo :hover {
+    cursor: pointer;
+}
+
+.empty_span {
+    width: 80px;
+}
+
+.logo .M {
+    font-family: Consolas, Courier, cursive;
+    font-size: 28px;
+}
+
+.logo .y {
+    color: #a80000;
+    font-family: "Courier New", Courier, cursive;
+    font-size: 18px;
+}
+
+.logo .y :hover {
+    color: #a80000;
+    font-family: "Courier New", Courier, cursive;
+    font-size: 26px;
+}
+
+.logo .t1 {
+    font-family: monospace, Courier, cursive;
+    font-size: 24px;
+}
+
+.logo .t2 {
+    font-family: monospace, Courier, cursive;
+    font-size: 24px;
+}
+
+.table_header {
+    width: 100%;
+}
+
+.top-line {
+    background-color: orangered;
+    width: 100%;
+    height: 3px;
+}
+
+.login_register {
+    float: right;
+}
+
+.head_picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
+.head_picture_small {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    margin-bottom: -3px;
+}
+
+footer {
+    width: 100%;
+    height: 35px;
+    text-align: center;
+
+}
+
+footer h1 {
+    margin-top: 10px;
+    font-size: 12px;
+    color: gray;
+}
+
+#main {
+    width: 80%;
+    margin: 0 auto;
+    min-height: 800px;
+}
+
+#tweets .tweet {
+    background-color: #e9e9e9;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+.tweet .recommend_p {
+    height: auto;
+}
+
+.tweet .recommend_text {
+    color: red;
+    height: 100%;
+    font-size: 16px;
+}
+
+.tweet .recommend_img {
+    height: 20px;
+    border-radius: 10px;
+    margin-bottom: -4px;
+}
+
+.tweet .tweet_contents {
+    background: #d8d5dc;
+    border-radius: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.tweet .transmit_tweet_contents {
+    background: #d8d5dc;
+    border-radius: 5px;
+    margin-left: 40px;
+    margin-right: 20px;
+}
+
+.tweet .transmit_p {
+    margin-left: 20px;
+}
+
+#tweets .div_users {
+    background-color: #e9e9e9;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+.tweet .tweet_unthumbsup_btn {
+    cursor: pointer;
+    height: 20px;
+    margin-bottom: -3px;
+}
+
+.tweet .tweet_thumbsup_btn {
+    cursor: pointer;
+    height: 20px;
+    margin-bottom: -3px;
+}
+
+.tweet .tweet_unthumbsup_btn:hover {
+    height: 25px;
+    cursor: pointer;
+    margin-bottom: -3px;
+}
+
+.tweet .tweet_thumbsup_btn:hover {
+    height: 25px;
+    cursor: pointer;
+    margin-bottom: -3px;
+}
+
+.tweet .comment_unthumbsup_btn {
+    cursor: pointer;
+    height: 20px;
+    margin-bottom: -3px;
+}
+
+.tweet .comment_thumbsup_btn {
+    cursor: pointer;
+    height: 20px;
+    margin-bottom: -3px;
+}
+
+.tweet .comment_unthumbsup_btn:hover {
+    height: 25px;
+    cursor: pointer;
+    margin-bottom: -3px;
+}
+
+.tweet .comment_thumbsup_btn:hover {
+    height: 25px;
+    cursor: pointer;
+    margin-bottom: -3px;
+}
+
+.tweet .transmit_btn {
+    cursor: pointer;
+    margin-bottom: -3px;
+    height: 20px;
+}
+
+.tweet .transmit_btn:hover {
+    margin-bottom: -3px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.tweet .d_top_comment {
+    margin-left: 5px;
+    margin-right: 5px;
+    background: #d9d9d9;
+}
+
+.tweet .delete_tweet_btn {
+    float: right;
+    margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.tweet .d_comment {
+    margin-left: 25px;
+    margin-right: 15px;
+}
+
+.tweet .reply_top_comment_btn {
+    height: 20px;
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+.tweet .reply_top_comment_btn:hover {
+    height: 25px;
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+.tweet .reply_comment_btn {
+    height: 20px;
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+.tweet .reply_comment_btn:hover {
+    height: 25px;
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+.tweet .top_comment_s {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.tweet .delete_tweet_tag_btn {
+    height: 20px;
+    width: 20px;
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+.tweet .delete_tweet_tag_btn:hover {
+    height: 25px;
+    width: 25px;
+    margin-bottom: -3px;
+    cursor: pointer;
+}
+
+#tweets .tweet #user-avatar {
+    float: left;
+}
+
+#tweets .tweet #tweet-info {
+    float: left;
+}
+
+#tweets .tweet .empty {
+    clear: both;
+}
+
+#tweets .div_users .user_head_big {
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
+}
+
+#main #content {
+    width: 100%;
+    height: 250px;
+}
+
+#main .post_tweet_btn {
+    width: 100%;
+    height: auto;
+    color: white;
+    font-size: 22px;
+    font-family: Consolas, monospace;
+    background: #c85155;
+    border-radius: 6px;
+}
+
+.register_div {
+    background: #eeeeee;
+    width: 80%;
+    margin: 0 auto;
+    min-height: 800px;
+    text-align: center;
+    align-content: center;
+    font-size: 20px;
+}
+
+.r_name {
+    width: 300px;
+    margin: 0 auto;
+}
+
+.r_pass {
+    width: 300px;
+    margin: 0 auto;
+}
+
+.r_rpass {
+    width: 300px;
+    margin: 0 auto;
+}
+
+.r_btn {
+    width: 300px;
+    margin: 0 auto;
+}
+
+#register {
+    width: 100%;
+}
+
+#personal_main {
+    width: 80%;
+    margin: 0 auto;
+}
+
+#personal_main .personal_info {
+    background: #f2f2f2;
+    border-radius: 6px;
+}
+
+#personal_main #tags {
+    background: #f2f2f2;
+    border-radius: 6px;
+}
+
+#personal_main .personal_ims {
+    background: #f2f2f2;
+    border-radius: 6px;
+}
+
+#personal_main .follows {
+    background: #f2f2f2;
+    border-radius: 6px;
+}
+
+#personal_main .fans {
+    background: #f2f2f2;
+    border-radius: 6px;
+}
+
+#personal_main .user_head_big{
+    width: 70px;
+    height: 70px;
+    border-radius: 35px;
+}
+
+#personal_main .mid_picture{
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+}
+
+#personal_main .personal_small_head{
+    height: 24px;
+    width: 24px;
+    border-radius: 14px;
+    margin-bottom: -3px;
+}
+
+#personal_main .from_user_im{
+    margin-left: 20px;
+}

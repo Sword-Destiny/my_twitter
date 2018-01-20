@@ -185,6 +185,15 @@ class PersonalHomepageController < ApplicationController
       end
       return
     end
+    e_tags = UserTag.list_tags(user[:id])
+    if e_tags.length >= 8
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '标签不能多于八个'}.to_json}
+      end
+      return
+    end
     usertag = UserTag.add_user_tag(newtag, user)
     if usertag
       respond_to do |format|

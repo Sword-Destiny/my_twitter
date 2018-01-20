@@ -1,8 +1,95 @@
-<input type="text" id="name" class="name" placeholder="Name">
-<input type="password" placeholder="Password" class="password" id="password">
-<input type="password" placeholder="Password Repeat" class="password" id="password_repeat">
-<button type="button" id="register" class="reister">注册</button>
-<a href="/sessions/new">主页面</a>
+<%
+  cu = session[:current_user]
+  if cu
+    user_id = cu['id']
+  else
+    user_id = -1
+  end
+%>
+
+<header class="header">
+  <table class="table_header">
+    <tr>
+      <td>
+        <div class="logo">
+          <span class="M">M</span>
+          <span class="y">y</span>
+          <span class="t1">T</span>
+          <span class="t2">T</span>
+        </div>
+      </td>
+      <td>
+        <table class="table_search">
+          <tr>
+            <td>
+              <input type="text" id="input_search" class="input_search" placeholder="搜索(动态,用户)" autocomplete="off">
+            </td>
+            <td>
+              <button type="button" class="fa fa-search search_btn" id="search_btn">搜索</button>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td class="login_register">
+        <table>
+          <tr>
+            <% if user_id != -1 %>
+                <td>
+                  <span><%= cu['name'] %></span>
+                </td>
+                <td>
+                  <a href="/personal_homepage/new?home_user_id=<%= user_id %>">
+                    <img class="head_picture" src="<%= cu['head_picture'] %>">
+                  </a>
+                </td>
+            <% end %>
+            <td class="empty_span">
+              <span></span>
+            </td>
+            <% if user_id == -1 %>
+                <td>
+                  <input type="text" id="name" class="name" placeholder="Name">
+                </td>
+                <td>
+                  <input type="password" placeholder="Password" class="password" id="password">
+                </td>
+                <td>
+                  <button type="button" id="login" class="login">登录</button>
+                </td>
+            <% else %>
+                <td>
+                  <button type="button" id="logout" class="logout">退出</button>
+                </td>
+            <% end %>
+            <td>
+              <a href="/applicants/new">注册</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+    </tr>
+  </table>
+  <div class="top-line"></div>
+</header>
+<div class="register_div">
+  <br>
+  <br>
+  <br>
+  <div class="r_name">
+    名&nbsp;&nbsp;称:<input type="text" id="name" class="name" placeholder="Name">
+  </div>
+  <div class="r_pass">
+    密&nbsp;&nbsp;码:<input type="password" placeholder="Password" class="password" id="password">
+  </div>
+  <div class="r_rpass">
+    重&nbsp;&nbsp;复:<input type="password" placeholder="Password Repeat" class="password" id="password_repeat">
+  </div>
+  <br>
+  <div class="r_btn">
+    <button type="button" id="register" class="reister">注册</button>
+  </div>
+</div>
 <script>
 
     $(document).ready(function () {
@@ -38,5 +125,71 @@
                 }
             });
         });
+        $('#login').click(function () {
+            var name = document.getElementById("name").value.toString();
+            var password = document.getElementById("password").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/create",
+                data: {"name": name, "password": password},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        $('#name').val('').attr("placeholder", data.info);
+                        $('#password').val('').attr("placeholder", "Password");
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+        $('#logout').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/logout",
+                data: {},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        alert(data.info);
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+
+        $('#search_btn').click(function () {
+            var keyword = document.getElementById("input_search").value.toString();
+            window.location.href = "/sessions/new?search=1&keyword=" + keyword;
+        });
+        $('.logo').click(function () {
+            window.location.href = "/sessions/new";
+        });
     });
 </script>
+<footer class="footer">
+  <h1>My Twitter 高级软件工程大作业</h1>
+</footer>

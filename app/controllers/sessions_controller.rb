@@ -272,6 +272,15 @@ class SessionsController < ApplicationController
       end
       return
     end
+    e_tags = TweetTag.list_tags(tweet[:id])
+    if e_tags.length >= 8
+      respond_to do |format|
+        format.js
+        format.html
+        format.json {render :json => {:status => 'error', :info => '标签不能多于八个'}.to_json}
+      end
+      return
+    end
     tweet_tag = TweetTag.add_tweet_tag(newtag, tweet)
     if tweet_tag
       respond_to do |format|

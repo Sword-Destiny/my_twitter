@@ -18,4 +18,8 @@ class UserTag < ActiveRecord::Base
     UserTag.where('user_id = ?',user_id)
   end
 
+  def taglen(user_id)
+    UserTag
+  end
+
 end

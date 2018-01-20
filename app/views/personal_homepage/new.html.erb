@@ -1,129 +1,337 @@
-<%= render 'layouts/userheader' %>
-<a onclick="window.location.href='/sessions/new'"><u>main page</u></a>
 <%
   @home_user_id = params[:home_user_id]
   @home_user = User.get_user(params[:home_user_id])
   cu = session[:current_user]
   follows = Follow.get_follow(@home_user_id)
   fans = Follow.get_fans(@home_user_id)
+  if cu
+    user_id = cu['id']
+  else
+    user_id = -1
+  end
 %>
-<div>
-  <div id="username"><%= raw @home_user[:name] %></div>
-  <% if cu['id'].to_s == @home_user_id %>
-      <input type="text" placeholder="New Name" id="newname">
-      <button type="button" id="update_name_btn">修改名字</button>
-  <% end %>
-  <p>I D:<%= raw @home_user[:id] %></p>
-  <% if cu['id'].to_s == @home_user_id %>
-      <input type="password" placeholder="New Password" id="password">
-      <input type="password" placeholder="Repeat" id="password_repeat">
-      <button type="button" id="update_password_btn">修改密码</button>
-  <% end %>
-  <% if cu['id'].to_s == @home_user_id %>
-      <p>未读消息:<span id="unread_info_num_span"><%= @home_user[:unread_info_num] %></span></p>
-  <% end %>
-  <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
-    <img id="home_user_head_picture" src="<%= @home_user[:head_picture] %>">
-  </a>
-  <% if cu['id'].to_s == @home_user_id %>
-      <form action="/personal_homepage/update_head_picture" method="post" id="uploadForm" enctype="multipart/form-data">
-        <input type="file" id="img_upload" name="img_upload" accept=".jpg,.gif,.png,.jpeg">
-        <button type="button" id="update_head_picture_btn">修改头像</button>
-      </form>
-  <% end %>
-</div>
-<br>
-<div id="tags">
-  <%
-    if cu['id'].to_s == @home_user_id
-  %>
-      <span>我的标签:</span><br>
-      <%
-        tags = UserTag.list_tags(@home_user_id)
-        tags.each do |tag|
-      %>
-          <div id="tag_div_<%= tag[:id] %>" class="tag_div">
-            <span id="tag_span_<%= tag[:id] %>" class="tag_span"><%= tag[:tag] %></span>
-            <button type="button" id="tag_btn_<%= tag[:id] %>" class="tag_btn">删除</button>
+
+<header class="header">
+  <table class="table_header">
+    <tr>
+      <td>
+        <div class="logo">
+          <span class="M">M</span>
+          <span class="y">y</span>
+          <span class="t1">T</span>
+          <span class="t2">T</span>
+        </div>
+      </td>
+      <td>
+        <table class="table_search">
+          <tr>
+            <td>
+              <input type="text" id="input_search" class="input_search" placeholder="搜索(动态,用户)" autocomplete="off">
+            </td>
+            <td>
+              <button type="button" class="fa fa-search search_btn" id="search_btn">搜索</button>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td class="login_register">
+        <table>
+          <tr>
+            <% if user_id != -1 %>
+                <td>
+                  <span><%= cu['name'] %></span>
+                </td>
+                <td>
+                  <a href="/personal_homepage/new?home_user_id=<%= user_id %>">
+                    <img class="head_picture" src="<%= cu['head_picture'] %>">
+                  </a>
+                </td>
+            <% end %>
+            <td class="empty_span">
+              <span></span>
+            </td>
+            <% if user_id == -1 %>
+                <td>
+                  <input type="text" id="name" class="name" placeholder="Name">
+                </td>
+                <td>
+                  <input type="password" placeholder="Password" class="password" id="password">
+                </td>
+                <td>
+                  <button type="button" id="login" class="login">登录</button>
+                </td>
+            <% else %>
+                <td>
+                  <button type="button" id="logout" class="logout">退出</button>
+                </td>
+            <% end %>
+            <td>
+              <a href="/applicants/new">注册</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+
+    </tr>
+  </table>
+  <div class="top-line"></div>
+</header>
+<div id="personal_main">
+  <br>
+  <div class="personal_info">
+    <table class="user">
+      <tr>
+        <td>
+          <h4 class="personal_name"><%= raw @home_user[:name] %>&nbsp;&nbsp;</h4>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <span>I D:<%= raw @home_user[:id] %></span>
+        </td>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+          <a href="/personal_homepage/new?home_user_id=<%= @home_user[:id] %>">
+            <img class="mid_picture" id="home_user_head_picture" src="<%= @home_user[:head_picture] %>">
+          </a>
+        </td>
+      </tr>
+    </table>
+    <% if cu['id'].to_s == @home_user_id %>
+        <input type="text" placeholder="New Name" id="newname">
+        <button type="button" id="update_name_btn">修改名字</button>
+        <br>
+        <input type="password" placeholder="New Password" id="password">
+        <input type="password" placeholder="Repeat" id="password_repeat">
+        <button type="button" id="update_password_btn">修改密码</button>
+        <br>
+        <form action="/personal_homepage/update_head_picture" method="post" id="uploadForm" enctype="multipart/form-data">
+          <input type="file" id="img_upload" name="img_upload" accept=".jpg,.gif,.png,.jpeg">
+          <button type="button" id="update_head_picture_btn">修改头像</button>
+        </form>
+    <% else %>
+        <div class="functions">
+          <div id="send_im_info">
+            <input type="text" placeholder="消息" id="send_im">
+            <button type="button" id="send_im_btn">发送私信(阅后即焚)</button>
           </div>
-      <%
-        end
-      %>
-      <input type="text" placeholder="新标签" id="newtag">
-      <button type="button" id="add_tag_btn">添加标签</button>
-  <% else %>
-      <span>他(她)的标签:</span><br>
-      <%
-        tags = UserTag.list_tags(@home_user_id)
-        tags.each do |tag|
-      %>
-          <div id="tag_div_<%= tag[:id] %>" class="tag_div">
-            <span id="tag_span_<%= tag[:id] %>" class="tag_span"><%= tag[:tag] %></span>
-          </div>
-      <%
-        end
-      %>
-  <% end %>
-</div>
-<br>
-<div>
-  <%
-    if cu['id'].to_s == @home_user_id
-      unread_im_infos = ImInfo.list_all_unread_im_info(@home_user_id)
-      im_infos = unread_im_infos[:ims]
-      if unread_im_infos[:num] > 0
-  %>
-          <div id="unread_im_infos">
-            <div>未读消息:<span id="unread_num_span"><%= unread_im_infos[:num] %></span> 条
-              <button id="read_all_btn">全部标为已读</button>
-              <div id="read_all_text"></div>
-            </div>
+          <%
+            if Follow.is_follow(@home_user_id, cu['id'])
+          %>
+              <div id="unfollow_div">
+                <div id="unfollow_text"></div>
+                <button type="button" id="unfollow_btn">取关</button>
+              </div>
+          <% else %>
+              <div id="follow_div">
+                <div id="follow_text"></div>
+                <button type="button" id="follow_btn">关注</button>
+              </div>
+          <% end %>
+        </div>
+    <% end %>
+  </div>
+  <br>
+  <div id="tags">
+    <%
+      if cu['id'].to_s == @home_user_id
+    %>
+        <h4 class="my_tags_text">我的标签:</h4>
+        <br>
+        <%
+          tags = UserTag.list_tags(@home_user_id)
+        %>
+        <table id="tag_table">
+          <tr id="tag_tr">
             <%
-              im_infos.each do |im_info|
+              tags.each do |tag|
             %>
-                <p>from: <%= im_info[:username] %>
-                  <a href="/personal_homepage/new?home_user_id=<%= im_info[:from] %>"><img src="<%= im_info[:picture] %>"></a>
-                </p>
-                <%
-                  im_info[:im].each do |info|
-                %>
-                    <div id="btn<%= info[:id] %>">
-                      <%= raw info[:info] %>
-                      <button id="read_im_info_btn_<%= info[:id] %>" class="read_im_info_btn">标为已读</button>
-                      <div id="read_im_info_text_<%= info[:id] %>" class="read_im_info_text"></div>
-                    </div>
-                <%
-                  end
-                %>
+                <td id="tag_td_<%= tag[:id] %>">
+                  <div id="tag_div_<%= tag[:id] %>" class="tag_div">
+                    <span id="tag_span_<%= tag[:id] %>" class="tag_span"><%= tag[:tag] %></span>
+                    <img id="tag_btn_<%= tag[:id] %>" class="tag_btn" src="/pictures/delete.png">
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <%
               end
             %>
-          </div>
-      <%
-        end
-      %>
-  <%
-    end
-    unless cu['id'].to_s == @home_user_id
-  %>
-      <div id="send_im_info">
-        <input type="text" placeholder="消息" id="send_im">
-        <button type="button" id="send_im_btn">发送私信(阅后即焚)</button>
-      </div>
-      <%
-        if Follow.is_follow(@home_user_id, cu['id'])
-      %>
-          <div id="unfollow_div">
-            <div id="unfollow_text"></div>
-            <button type="button" id="unfollow_btn">取关</button>
-          </div>
-      <% else %>
-          <div id="follow_div">
-            <div id="follow_text"></div>
-            <button type="button" id="follow_btn">关注</button>
-          </div>
-      <% end %>
-  <% end %>
+          </tr>
+        </table>
+        <input type="text" placeholder="新标签" id="newtag">
+        <button type="button" id="add_tag_btn">添加标签</button>
+    <% else %>
+        <h4>他(她)的标签:</h4>
+        <br>
+        <%
+          tags = UserTag.list_tags(@home_user_id)
+        %>
+        <%
+          if tags.empty?
+        %>
+        空
+        <%
+          end
+        %>
+        <table>
+          <tr>
+            <%
+              tags.each do |tag|
+            %>
+                <td>
+                  <div id="tag_div_<%= tag[:id] %>" class="tag_div">
+                    <span id="tag_span_<%= tag[:id] %>" class="tag_span"><%= tag[:tag] %></span>
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <%
+              end
+            %>
+          </tr>
+        </table>
+    <% end %>
+  </div>
+  <br>
+  <div class="personal_ims">
+    <%
+      if cu['id'].to_s == @home_user_id
+        unread_im_infos = ImInfo.list_all_unread_im_info(@home_user_id)
+        im_infos = unread_im_infos[:ims]
+        if unread_im_infos[:num] > 0
+    %>
+            <div id="unread_im_infos">
+              <div><h4>未读消息:</h4><span id="unread_num_span"><%= unread_im_infos[:num] %></span> 条
+                <button id="read_all_btn">全部标为已读</button>
+                <div id="read_all_text"></div>
+              </div>
+              <%
+                im_infos.each do |im_info|
+              %>
+                  <p>from: <%= im_info[:username] %>
+                    <a href="/personal_homepage/new?home_user_id=<%= im_info[:from] %>"><img class="personal_small_head" src="<%= im_info[:picture] %>"></a>
+                  </p>
+                  <%
+                    im_info[:im].each do |info|
+                  %>
+                      <div id="btn<%= info[:id] %>" class="from_user_im">
+                        <%= raw info[:info] %>
+                        <button id="read_im_info_btn_<%= info[:id] %>" class="read_im_info_btn">标为已读</button>
+                        <div id="read_im_info_text_<%= info[:id] %>" class="read_im_info_text"></div>
+                      </div>
+                  <%
+                    end
+                  %>
+              <%
+                end
+              %>
+            </div>
+        <%
+          end
+        %>
+    <%
+      end
+    %>
+  </div>
+  <br>
+  <div class="follows">
+    <% if cu['id'].to_s == @home_user_id %>
+        <h4>我的关注:</h4>
+    <% else %>
+        <h4>他(她)的关注:</h4>
+    <% end %>
+    <table>
+      <tr>
+        <%
+          i = 0
+          while i < follows.length do
+            u=follows[i]
+            if i % 8 == 7
+        %>
+                <td>
+                  <div id="follow<%= u[:id] %>">
+                    <p>用户:<%= u[:name] %></p>
+                    <p>I D:<%= u[:id] %></p>
+                    <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
+                      <img class="user_head_big" src="<%= raw u[:head_picture] %>">
+                    </a>
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+            <%
+              else
+            %>
+                <td>
+                  <div id="follow<%= u[:id] %>">
+                    <p>用户:<%= u[:name] %></p>
+                    <p>I D:<%= u[:id] %></p>
+                    <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
+                      <img class="user_head_big" src="<%= raw u[:head_picture] %>">
+                    </a>
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <%
+              end
+            %>
+        <%
+          i+=1
+          end
+        %>
+        </tr>
+        </table>
+  </div>
+  <br>
+  <div class="fans">
+    <% if cu['id'].to_s == @home_user_id %>
+        <h4>我的粉丝:</h4>
+    <% else %>
+        <h4>他(她)的粉丝:</h4>
+    <% end %>
+
+    <table>
+      <tr>
+        <%
+          i = 0
+          while i < fans.length do
+            u=fans[i]
+            if i % 8 == 7
+        %>
+                <td>
+                  <div id="follow<%= u[:id] %>">
+                    <p>用户:<%= u[:name] %></p>
+                    <p>I D:<%= u[:id] %></p>
+                    <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
+                      <img class="user_head_big" src="<%= raw u[:head_picture] %>">
+                    </a>
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+                <tr>
+            <%
+              else
+            %>
+                <td>
+                  <div id="follow<%= u[:id] %>">
+                    <p>用户:<%= u[:name] %></p>
+                    <p>I D:<%= u[:id] %></p>
+                    <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
+                      <img class="user_head_big" src="<%= raw u[:head_picture] %>">
+                    </a>
+                  </div>
+                </td>
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <%
+              end
+            %>
+        <%
+          i+=1
+          end
+        %>
+        </tr>
+        </table>
+  </div>
 </div>
 <script>
     $(document).ready(function () {
@@ -140,36 +348,29 @@
                     //alert(textStatus);
                     alert(errorThrown);
                     //alert("失败");
-                },
+                }, /**/
                 success: function (data, textStatus) {
                     //alert(JSON.stringify(data));
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
                         $('#newtag').val('').attr("placeholder", data.info);
-                        var newtag_element = document.getElementById("newtag");
-                        var tags = document.getElementById("tags");
+                        var tags = document.getElementById("tag_tr");
 
-                        var subdiv = document.createElement('div');
-                        subdiv.id = "tag_div_" + data.id;
-                        subdiv.setAttribute("class", "tag_div");
+                        var td = document.createElement('td');
+                        td.id = "tag_td_" + data.id;
+                        td.innerHTML = '<div id="tag_div_' + data.id + '" class="tag_div">\n' +
+                            '<span id="tag_span_' + data.id + '" class="tag_span">' + newtag + '</span>\n' +
+                            '<img id="tag_btn_' + data.id + '" class="tag_btn" src="/pictures/delete.png">\n' +
+                            '</div>';
+                        var td1 = document.createElement('td');
+                        td1.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
-                        var span = document.createElement('span');
-                        span.id = "tag_span_" + data.id;
-                        span.setAttribute("class", "tag_span");
-                        span.innerHTML = newtag + " ";
-
-                        var btn = document.createElement('button');
-                        btn.type = "button";
-                        btn.id = "tag_btn_" + data.id;
-                        btn.setAttribute("class", "tag_btn");
-                        btn.innerHTML = "删除";
+                        tags.appendChild(td);
+                        tags.appendChild(td1);
+                        var btn = document.getElementById('tag_btn_' + data.id);
                         btn.onclick = delete_tag;
 
-                        subdiv.appendChild(span);
-                        subdiv.appendChild(btn);
-
-                        tags.insertBefore(subdiv, newtag_element);
 
                     } else {
                         $('#newtag').val('').attr("placeholder", data.info);
@@ -196,8 +397,8 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        var element = document.getElementById("tag_div_" + id);
-                        var tags = document.getElementById("tags");
+                        var element = document.getElementById("tag_td_" + id);
+                        var tags = document.getElementById("tag_tr");
                         tags.removeChild(element);
                     } else {
                         alert(data.info);
@@ -433,37 +634,71 @@
                 }
             });
         });
+        $('#login').click(function () {
+            var name = document.getElementById("name").value.toString();
+            var password = document.getElementById("password").value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/create",
+                data: {"name": name, "password": password},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        $('#name').val('').attr("placeholder", data.info);
+                        $('#password').val('').attr("placeholder", "Password");
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+        $('#logout').click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/logout",
+                data: {},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/sessions/new";
+                    } else {
+                        alert(data.info);
+                        //$('#name').attr("placeholder", data.info);
+                        //$('#password').attr("placeholder", "Password");
+                    }
+                }
+            });
+        });
+
+        $('#search_btn').click(function () {
+            var keyword = document.getElementById("input_search").value.toString();
+            window.location.href = "/sessions/new?search=1&keyword=" + keyword;
+        });
+        $('.logo').click(function () {
+            window.location.href = "/sessions/new";
+        });
     });
 </script>
-<h4>他(她)的关注:</h4>
-<div>
-  <%
-    follows.each do |u|
-  %>
-      <div id="follow<%= u[:id] %>">
-        <p>用户:<%= u[:name] %></p>
-        <p>I D:<%= u[:id] %></p>
-        <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
-          <img src="<%= raw u[:head_picture] %>">
-        </a>
-      </div>
-  <%
-    end
-  %>
-</div>
-<h4>他(她)的粉丝</h4>
-<div>
-  <%
-    fans.each do |u|
-  %>
-      <div id="follow<%= u[:id] %>">
-        <p>用户:<%= u[:name] %></p>
-        <p>I D:<%= u[:id] %></p>
-        <a href="/personal_homepage/new?home_user_id=<%= u['id'] %>">
-          <img src="<%= raw u[:head_picture] %>">
-        </a>
-      </div>
-  <%
-    end
-  %>
-</div>
+<footer class="footer">
+  <h1>My Twitter 高级软件工程大作业</h1>
+</footer>
