@@ -88,13 +88,13 @@
   <br>
   <br>
   <div class="r_name">
-    名&nbsp;&nbsp;称:<input type="text" id="name" class="name" placeholder="Name">
+    名&nbsp;&nbsp;称:<input type="text" id="rname" class="rname" placeholder="Name">
   </div>
   <div class="r_pass">
-    密&nbsp;&nbsp;码:<input type="password" placeholder="Password" class="password" id="password">
+    密&nbsp;&nbsp;码:<input type="password" placeholder="Password" class="rpassword" id="rpassword">
   </div>
   <div class="r_rpass">
-    重&nbsp;&nbsp;复:<input type="password" placeholder="Password Repeat" class="password" id="password_repeat">
+    重&nbsp;&nbsp;复:<input type="password" placeholder="Password Repeat" class="rpassword" id="rpassword_repeat">
   </div>
   <br>
   <div class="r_btn">
@@ -105,9 +105,9 @@
 
     $(document).ready(function () {
         $('#register').click(function () {
-            var name = document.getElementById("name").value.toString();
-            var password = document.getElementById("password").value.toString();
-            var password_repeat = document.getElementById("password_repeat").value.toString();
+            var name = document.getElementById("rname").value.toString();
+            var password = document.getElementById("rpassword").value.toString();
+            var password_repeat = document.getElementById("rpassword_repeat").value.toString();
             $.ajax({
                 type: "POST",
                 url: "/applicants/create",
@@ -126,12 +126,12 @@
                     if ("success" === status) {
                         window.location.href = "/sessions/new";
                     } else {
-                        $('#name').val('');
-                        $('#password').val('');
-                        $('#password_repeat').val('');
-                        $('#name').attr("placeholder", data.info);
-                        $('#password').attr("placeholder", "Password");
-                        $('#password_repeat').attr("placeholder", "Password Repeat");
+                        $('#rname').val('');
+                        $('#rpassword').val('');
+                        $('#rpassword_repeat').val('');
+                        $('#rname').attr("placeholder", data.info);
+                        $('#rpassword').attr("placeholder", "Password");
+                        $('#rpassword_repeat').attr("placeholder", "Password Repeat");
                     }
                 }
             });

@@ -88,7 +88,7 @@
     <%= form_for :session, url: :sessions_post_tweet do |f| %>
         <%= kindeditor_tag :content, '', :simple_mode => true %>
         <% if session[:post] and session[:post_error] %>
-            <textarea id="post_error">error: <%= session[:post_error] %></textarea>
+            <div id="post_error">error: <%= session[:post_error] %></div>
         <% end %>
         <p><%= f.button '发布', :id => 'post_tweet_btn', :class => 'post_tweet_btn' %></p>
     <% end %>
