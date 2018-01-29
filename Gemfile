@@ -52,6 +52,8 @@ group :development do
 group :development, :test do 
     gem 'byebug', platform: :mri  
     gem 'rspec-rails'
+    gem 'minitest-reporters', '1.1.9'
+    gem "minitest-rails"
     # gem 'factory_girl_rails', '4.7.0'  
     # gem 'faker', '1.6.6'
 end

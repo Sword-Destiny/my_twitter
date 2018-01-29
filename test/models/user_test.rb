@@ -1,9 +1,19 @@
-require 'test_helper'
-require 'user.rb'
+#vim people_test.rb
+require 'minitest/autorun'
+require './user'
+require test_help
 
-class UserTest < ActiveSupport::TestCase
-  test "user attributes must not be empty" do  
-    user = User.new  
-    assert user.invalid?
+class TestUser < ActiveSupport::TestCase
+  def setup
+    @user = User.new(name:"bai", password:"123456")
+  end
+
+  test "should be valid" do
+    assert @user.valid?
+  end
+  
+  test "user's name should be present" do
+    @user.name='    '
+    assert_not @user.valid?
   end
 end
