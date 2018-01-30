@@ -15,6 +15,18 @@ class Tweet < ActiveRecord::Base
     end
   end
 
+  # 列出所有我的动态
+  def Tweet.list_my_tweets(user_id)
+    if user_id!=-1
+      user_tweets = []+Tweet.where('user_id = ?', user_id)
+      user_tweets.sort_by! {|t| t[:created_at]}
+      user_tweets.reverse!
+      process_tweets(user_tweets, [], user_id)
+    else
+      []
+    end
+  end
+
   # 格式化动态
   def Tweet.process_tweets(tweets, recommends, user_id)
     tweets_list = []

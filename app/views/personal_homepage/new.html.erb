@@ -344,10 +344,687 @@
         </tr>
         </table>
   </div>
+
+  <div class="tweets" id="tweets">
+    <% if cu['id'].to_s == @home_user_id %>
+        <h4>我的动态:</h4>
+    <% else %>
+        <h4>他(她)的动态:</h4>
+    <% end %>
+    <%
+      tweets_list = Tweet.list_my_tweets(@home_user_id)
+      tweets_list.each do |it|
+    %>
+        <div id="tweet_<%= it[:tweet][:id] %>" class="tweet">
+          <p class="recommend_p">
+            <% if it[:recommend] %>
+                <span class="recommend_text">推荐</span>
+                <img class="recommend_img" src="/pictures/recommend.jpg">
+            <% end %>
+            <span><%= it[:username] %></span>
+            <a href="/personal_homepage/new?home_user_id=<%= it[:tweet][:user_id] %>">
+              <img class="head_picture_small" src="<%= it[:picture] %>">
+            </a>
+            <span>:</span>
+            <% if user_id == it[:tweet][:user_id] %>
+                <button id="delete_tweet_btn_<%= it[:tweet][:id] %>" class="delete_tweet_btn" type="button">删除动态</button>
+            <% end %>
+          </p>
+          <div id="tweet_contents_<%= it[:tweet][:id] %>" class="tweet_contents">
+            <%= raw it[:tweet][:contents] %>
+          </div>
+          <% if it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+              <% if user_id == it[:tweet][:user_id] %>
+                  <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
+                    <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
+                      <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
+                        <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
+                        <%
+                          it[:tags].each do |tag|
+                        %>
+                            <td id="td_tags_<%= tag[:id] %>" class="td_tags">
+                              <%= tag[:tag] %>
+                              <img id="delete_tweet_tag_btn_<%= tag[:id] %>" class="delete_tweet_tag_btn" src="/pictures/delete.png">
+                            </td>
+                        <%
+                          end
+                        %>
+                        <td id="td_add_tag_<%= it[:tweet][:id] %>" class="td_add_tag">
+                          <input type="text" id="input_add_tag_<%= it[:tweet][:id] %>" class="input_add_tag" placeholder="新标签">
+                          <button type="button" id="add_tag_btn_<%= it[:tweet][:id] %>" class="add_tweet_tag_btn">添加</button>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+              <% else %>
+                  <div id="tweet_tags_<%= it[:tweet][:id] %>" class="tweet_tags">
+                    <table id="table_tags_<%= it[:tweet][:id] %>" class="table_tags">
+                      <tr id="tr_tags_<%= it[:tweet][:id] %>" class="tr_tags">
+                        <td id="td_label_tag_<%= it[:tweet][:id] %>" class="td_label_tag">标签:</td>
+                        <%
+                          it[:tags].each do |tag|
+                        %>
+                            <td id="td_tags_<%= it[:tweet][:id] %>" class="td_tags">
+                              <%= tag[:tag] %>
+                            </td>
+                        <%
+                          end
+                        %>
+                      </tr>
+                    </table>
+                  </div>
+              <% end %>
+          <% end %>
+          <% unless it[:tweet][:transmit_from_id] == -1 or it[:tweet][:transmit_from_id] == '-1' %>
+              <br>
+              <span class="transmit_p">转发自:<%= it[:transmit_name] %></span>
+              <% if it[:transmit_tweet] == nil %>
+                  <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_" class="transmit_tweet_contents">
+                    原动态已删除
+                  </div>
+              <% else %>
+                  <a href="/personal_homepage/new?home_user_id=<%= it[:transmit_uid] %>">
+                    <img class="head_picture_small" src="<%= it[:transmit_picture] %>">
+                  </a>
+                  <span>:</span>
+                  <div id="transmit_tweet_contents_<%= it[:tweet][:id] %>_<%= it[:transmit_tweet][:id] %>" class="transmit_tweet_contents">
+                    <%= raw it[:transmit_tweet][:contents] %>
+                  </div>
+              <% end %>
+          <% end %>
+          <p id="b_p_tweet_<%= it[:tweet][:id] %>" class="b_p_tweet">
+            <% if it[:thumbsup] %>
+                <img id="tweet_unthumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_unthumbsup_btn" src="/pictures/like2.png">
+            <% else %>
+                <img id="tweet_thumbsup_btn_<%= it[:tweet][:id] %>" class="tweet_thumbsup_btn" src="/pictures/like1.png">
+            <% end %>
+            <span id="tweet_thumbsup_num_span_<%= it[:tweet][:id] %>" class="tweet_thumbsup_num_span"><%= it[:tweet][:thumbs_up_num] %></span>
+            <span id="comment_num_<%= it[:tweet][:id] %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;评论:<%= it[:tweet][:comment_num] %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <img id="transmit_btn_<%= it[:tweet][:id] %>" class="transmit_btn" src="/pictures/transmit.png">
+            <span><%= it[:tweet][:transmit_num] %></span>
+          </p>
+          <%
+            comments_list = Comment.list_comments(it[:tweet][:id], user_id)
+            comments_list.each do |item|
+          %>
+              <div id="div_comment_<%= item[:top_comment][:id] %>" class="d_top_comment">
+                <p><%= raw item[:username] %> 评论:</p>
+                <span class="top_comment_s"><%= raw item[:top_comment][:contents] %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <% if item[:thumbsup] %>
+                    <img id="comment_unthumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_unthumbsup_btn" src="/pictures/like2.png">
+                <% else %>
+                    <img id="comment_thumbsup_btn_<%= item[:top_comment][:id] %>" class="comment_thumbsup_btn" src="/pictures/like1.png">
+                <% end %>
+                <span id="comment_thumbsup_num_<%= item[:top_comment][:id] %>"><%= item[:top_comment][:thumbs_up_num] %></span>
+                <span id="top_reply_num_<%= item[:top_comment][:id] %>">回复数:<%= item[:top_comment][:replyed_num] %></span>
+                <img id="reply_top_comment_btn_<%= item[:top_comment][:id] %>" class="reply_top_comment_btn" src="/pictures/comment.png">
+                <%
+                  item[:elements].each do |element|
+                %>
+                    <div id="comment_<%= element[:comment][:id] %>" class="d_comment">
+                      <span><%= raw element[:username] %> 回复 <%= raw element[:reply_username] %> :</span>
+                      <span><%= raw element[:comment][:contents] %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                      <% if element[:thumbsup] %>
+                          <img id="comment_unthumbsup_btn_<%= element[:comment][:id] %>" class="comment_unthumbsup_btn" src="/pictures/like2.png">
+                      <% else %>
+                          <img id="comment_thumbsup_btn_<%= element[:comment][:id] %>" class="comment_thumbsup_btn" src="/pictures/like1.png">
+                      <% end %>
+                      <span id="comment_thumbsup_num_<%= element[:comment][:id] %>"><%= element[:comment][:thumbs_up_num] %></span>
+                      <span id="comment_reply_num_<%= element[:comment][:id] %>">回复数:<%= element[:comment][:replyed_num] %></span>
+                      <img id="reply_comment_btn_<%= element[:comment][:id] %>" class="reply_comment_btn" src="/pictures/comment.png">
+                    </div>
+                <%
+                  end
+                %>
+              </div>
+          <%
+            end
+          %>
+          <br/>
+          <input type="text" id="post_comment_<%= it[:tweet][:id] %>" class="post_comment" placeholder="你的评论">
+          <button type="button" id="post_comment_btn_<%= it[:tweet][:id] %>" class="post_comment_btn">评论</button>
+        </div>
+    <%
+      end
+    %>
+  </div>
 </div>
 <script>
     $(document).ready(function () {
+        $('.delete_tweet_btn').click(function (param) {
+            var tweet_id = param.target.id.substr(17);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/delete_tweet",
+                data: {"tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);add_tag_btn
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        window.location.href = "/personal_homepage/new?home_user_id=<%= @home_user_id %>";
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        });
 
+        $('.add_tweet_tag_btn').click(function (param) {
+            var tweet_id = param.target.id.substr(12);
+            var newtag = document.getElementById("input_add_tag_" + tweet_id).value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/add_tag",
+                data: {"newtag": newtag, "tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        document.getElementById("input_add_tag_" + tweet_id).value = "";
+                        document.getElementById("input_add_tag_" + tweet_id).setAttribute("placeholder", data.info);
+                        var td = document.getElementById("td_add_tag_" + tweet_id);
+                        var tr = document.getElementById("tr_tags_" + tweet_id);
+
+                        var subtd = document.createElement('td');
+                        subtd.id = "td_tags_" + data.id;
+                        subtd.setAttribute("class", "td_tags");
+                        subtd.innerHTML = data.tag;
+
+                        var img = document.createElement('img');
+                        img.id = "delete_tweet_tag_btn_" + data.id;
+                        img.setAttribute("class", "delete_tweet_tag_btn");
+                        img.setAttribute("src", "/pictures/delete.png");
+                        img.onclick = delete_tweet_tag;
+
+                        subtd.appendChild(img);
+
+                        tr.insertBefore(subtd, td);
+
+                    } else {
+                        document.getElementById("input_add_tag_" + tweet_id).value = "";
+                        document.getElementById("input_add_tag_" + tweet_id).setAttribute("placeholder", data.info);
+                    }
+                }
+            });
+        });
+
+        $('.delete_tweet_tag_btn').click(delete_tweet_tag);
+
+        function delete_tweet_tag(param) {
+            var tag_id = param.target.id.substr(21);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/delete_tag",
+                data: {"tag_id": tag_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var td = document.getElementById("td_tags_" + tag_id);
+                        var tr = td.parentNode;
+                        tr.removeChild(td);
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+        $('.tweet_thumbsup_btn').click(tweet_thumbsup_un_thumbsup);
+        $('.tweet_unthumbsup_btn').click(tweet_thumbsup_un_thumbsup);
+
+        $('.comment_thumbsup_btn').click(comment_thumbsup_un_thumbsup);
+        $('.comment_unthumbsup_btn').click(comment_thumbsup_un_thumbsup);
+
+        function tweet_thumbsup_un_thumbsup(param) {
+            if (param.target.getAttribute("class") === "tweet_unthumbsup_btn") {
+                tweet_un_thumbsup(param);
+            } else {
+                tweet_thumbsup(param);
+            }
+        }
+
+        function comment_thumbsup_un_thumbsup(param) {
+            if (param.target.getAttribute("class") === "comment_unthumbsup_btn") {
+                comment_un_thumbsup(param);
+            } else {
+                comment_thumbsup(param);
+            }
+        }
+
+        function comment_thumbsup(param) {
+            var comment_id = param.target.id.substr(21);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/thumbsup_comment",
+                data: {"comment_id": comment_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("comment_thumbsup_btn_" + comment_id);
+                        btn.innerHTML = "取消点赞";
+                        btn.id = "comment_unthumbsup_btn_" + comment_id;
+                        btn.setAttribute("class", "comment_unthumbsup_btn");
+                        btn.setAttribute("src", "/pictures/like2.png");
+                        document.getElementById("comment_thumbsup_num_" + comment_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+        function comment_un_thumbsup(param) {
+            var comment_id = param.target.id.substr(23);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/unthumbsup_comment",
+                data: {"comment_id": comment_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("comment_unthumbsup_btn_" + comment_id);
+                        btn.innerHTML = "点赞";
+                        btn.id = "comment_thumbsup_btn_" + comment_id;
+                        btn.setAttribute("class", "comment_thumbsup_btn");
+                        btn.setAttribute("src", "/pictures/like1.png");
+                        document.getElementById("comment_thumbsup_num_" + comment_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+
+        function tweet_thumbsup(param) {
+            var tweet = param.target.parentNode.parentNode;
+            var tweet_id = tweet.id.substr(6);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/thumbsup",
+                data: {"tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("tweet_thumbsup_btn_" + tweet_id);
+                        btn.innerHTML = "取消点赞";
+                        btn.id = "tweet_unthumbsup_btn_" + tweet_id;
+                        btn.setAttribute("src", "/pictures/like2.png");
+                        btn.setAttribute("class", "tweet_unthumbsup_btn");
+                        document.getElementById("tweet_thumbsup_num_span_" + tweet_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+        function tweet_un_thumbsup(param) {
+            var tweet = param.target.parentNode.parentNode;
+            var tweet_id = tweet.id.substr(6);
+            $.ajax({
+                type: "POST",
+                url: "/sessions/unthumbsup",
+                data: {"tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        var btn = document.getElementById("tweet_unthumbsup_btn_" + tweet_id);
+                        btn.innerHTML = "点赞";
+                        btn.id = "tweet_thumbsup_btn_" + tweet_id;
+                        btn.setAttribute("src", "/pictures/like1.png");
+                        btn.setAttribute("class", "tweet_thumbsup_btn");
+                        document.getElementById("tweet_thumbsup_num_span_" + tweet_id).innerHTML = data.num;
+                    } else {
+                        alert(data.info);
+                    }
+                }
+            });
+        }
+
+
+        function sure_transmit(content, tweet_id, error, success) {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/transmit",
+                data: {"content": content, "tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        success(data);
+                    } else {
+                        error(data.info);
+                    }
+                }
+            });
+        }
+
+        function transmit(param) {
+            var tweet_id = param.target.parentNode.id.substr(10);
+            var p_transmit = param.target.parentNode;
+            var btn = param.target;
+            var input = document.createElement('input');
+            input.id = "input_transmit_" + tweet_id;
+            input.setAttribute("class", "input_transmit");
+            input.setAttribute("placeholder", "转发内容");
+            p_transmit.insertBefore(input, btn);
+            var sure = document.createElement('button');
+            sure.type = "button";
+            sure.id = "sure_transmit_" + tweet_id;
+            sure.setAttribute("class", "sure_transmit");
+            sure.innerHTML = "确定";
+            p_transmit.insertBefore(sure, btn);
+            var cancel = document.createElement('button');
+            cancel.type = "button";
+            cancel.id = "cancel_transmit_" + tweet_id;
+            cancel.setAttribute("class", "cancel_transmit");
+            cancel.innerHTML = "取消";
+            cancel.onclick = function () {
+                p_transmit.removeChild(input);
+                p_transmit.removeChild(sure);
+                p_transmit.removeChild(cancel);
+                btn.hidden = false;
+            };
+            sure.onclick = function () {
+                var content = input.value.toString();
+                var error = function (info) {
+                    input.value = '';
+                    input.placeholder = info;
+                };
+                var success = function (data) {
+                    window.location.href = "/personal_homepage/new?home_user_id=<%= @home_user_id %>";
+                };
+                sure_transmit(content, tweet_id, error, success);
+            };
+            p_transmit.insertBefore(cancel, btn);
+            btn.hidden = true;
+        }
+
+        $('.transmit_btn').click(transmit);
+
+        function sure_top_comment(comment, top, tweet, errorcallback, successcallback) {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/reply_top_comment",
+                data: {"comment": comment, "tweet_id": tweet, "top_comment_id": top},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        successcallback(data);
+                    } else {
+                        errorcallback(data.info);
+                    }
+                }
+            });
+        }
+
+        function sure_comment(comment, reply, top, tweet, errorcallback, successcallback) {
+            $.ajax({
+                type: "POST",
+                url: "/sessions/reply_comment",
+                data: {"comment": comment, "tweet_id": tweet, "top_comment_id": top, "reply_comment_id": reply},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        successcallback(data);
+                    } else {
+                        errorcallback(data.info);
+                    }
+                }
+            });
+        }
+
+        function add_reply_comment(comment, top_comment_id, new_comment_id, reply_user_name) {
+            var top_comment = document.getElementById("div_comment_" + top_comment_id);
+            var div = document.createElement('div');
+            div.id = "comment_" + new_comment_id;
+            div.setAttribute("class", "d_comment");
+            div.innerHTML = '<span><%=raw cu ? cu['name']:'' %> 回复 ' + reply_user_name + ' :</span>\n' +
+                '<span>' + comment + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>\n' +
+                '<img id="comment_thumbsup_btn_' + new_comment_id + '" class="comment_thumbsup_btn" src="/pictures/like1.png">\n' +
+                '<span id="comment_thumbsup_num_' + new_comment_id + '">0</span>\n' +
+                '<span id="comment_reply_num_' + new_comment_id + '">回复数:0</span>\n' +
+                '<img id="reply_comment_btn_' + new_comment_id + '" class="reply_comment_btn" src="/pictures/comment.png">\n';
+            top_comment.appendChild(div);
+            document.getElementById("reply_comment_btn_" + new_comment_id).onclick = reply_comment;
+            document.getElementById("comment_thumbsup_btn_" + new_comment_id).onclick = comment_thumbsup_un_thumbsup;
+        }
+
+        function add_top_cmment(tweet_id, top_comment_id, contents) {
+            var tweet = document.getElementById("tweet_" + tweet_id);
+            var text = document.getElementById("post_comment_" + tweet_id);
+            var div = document.createElement('div');
+            div.id = "div_comment_" + top_comment_id;
+            div.setAttribute("class", "d_top_comment");
+            div.innerHTML = '<p><%=raw cu ? cu['name']:'' %> 评论:</p>\n' +
+                '<span class="top_comment_s">' + contents + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>\n' +
+                '<img id="comment_thumbsup_btn_' + top_comment_id + '" class="comment_thumbsup_btn" src="/pictures/like1.png">\n' +
+                '<span id="comment_thumbsup_num_' + top_comment_id + '">0</span>\n' +
+                '<span id="top_reply_num_' + top_comment_id + '">回复数:0</span>\n' +
+                '<img id="reply_top_comment_btn_' + top_comment_id + '" class="reply_top_comment_btn" src="/pictures/comment.png">\n';
+            tweet.insertBefore(div, text);
+            document.getElementById("reply_top_comment_btn_" + top_comment_id).onclick = reply_top_comment;
+            document.getElementById("comment_thumbsup_btn_" + top_comment_id).onclick = comment_thumbsup_un_thumbsup;
+        }
+
+        function reply_top_comment(param) {
+            var top_comment_id = param.target.parentNode.id.substr(12);
+            var tweet_id = param.target.parentNode.parentNode.id.substr(6);
+            var div = document.getElementById("div_comment_" + top_comment_id);
+            var btn = document.getElementById("reply_top_comment_btn_" + top_comment_id);
+            var input = document.createElement('input');
+            input.id = "input_top_comment_" + top_comment_id;
+            input.setAttribute("class", "input_top_comment");
+            input.setAttribute("placeholder", "回复内容");
+            div.insertBefore(input, btn);
+            var sure = document.createElement('button');
+            sure.type = "button";
+            sure.id = "sure_top_comment_" + top_comment_id;
+            sure.setAttribute("class", "sure_top_comment");
+            sure.innerHTML = "确定";
+            div.insertBefore(sure, btn);
+            var cancel = document.createElement('button');
+            cancel.type = "button";
+            cancel.id = "cancel_top_comment_" + top_comment_id;
+            cancel.setAttribute("class", "cancel_top_comment");
+            cancel.innerHTML = "取消";
+            cancel.onclick = function () {
+                div.removeChild(input);
+                div.removeChild(sure);
+                div.removeChild(cancel);
+                btn.hidden = false;
+            };
+            sure.onclick = function () {
+                var comment = input.value.toString();
+                var error = function (info) {
+                    input.value = '';
+                    input.placeholder = info;
+                };
+                var success = function (data) {
+                    div.removeChild(input);
+                    div.removeChild(sure);
+                    div.removeChild(cancel);
+                    btn.hidden = false;
+                    add_reply_comment(comment, top_comment_id, data.new_comment_id, data.reply_user_name);
+                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "回复数:" + data.top_comment_reply_num;
+                    document.getElementById("comment_num_" + tweet_id).innerHTML = "评论数:" + data.tweet_comment_num;
+                };
+                sure_top_comment(comment, top_comment_id, tweet_id, error, success);
+            };
+            div.insertBefore(cancel, btn);
+            btn.hidden = true;
+        }
+
+        function reply_comment(param) {
+            var comment_id = param.target.parentNode.id.substr(8);
+            var top_comment_id = param.target.parentNode.parentNode.id.substr(12);
+            var tweet_id = param.target.parentNode.parentNode.parentNode.id.substr(6);
+            var div = document.getElementById("comment_" + comment_id);
+            var btn = document.getElementById("reply_comment_btn_" + comment_id);
+            var input = document.createElement('input');
+            input.id = "input_comment_" + comment_id;
+            input.setAttribute("class", "input_comment");
+            input.setAttribute("placeholder", "回复内容");
+            div.insertBefore(input, btn);
+            var sure = document.createElement('button');
+            sure.type = "button";
+            sure.id = "sure_comment_" + comment_id;
+            sure.setAttribute("class", "sure_comment");
+            sure.innerHTML = "确定";
+            div.insertBefore(sure, btn);
+            var cancel = document.createElement('button');
+            cancel.type = "button";
+            cancel.id = "cancel_comment_" + comment_id;
+            cancel.setAttribute("class", "cancel_comment");
+            cancel.innerHTML = "取消";
+            cancel.onclick = function () {
+                div.removeChild(input);
+                div.removeChild(sure);
+                div.removeChild(cancel);
+                btn.hidden = false;
+            };
+            sure.onclick = function () {
+                var comment = input.value.toString();
+                var error = function (info) {
+                    input.value = '';
+                    input.placeholder = info;
+                };
+                var success = function (data) {
+                    div.removeChild(input);
+                    div.removeChild(sure);
+                    div.removeChild(cancel);
+                    btn.hidden = false;
+                    add_reply_comment(comment, top_comment_id, data.new_comment_id, data.reply_user_name);
+                    document.getElementById("comment_reply_num_" + comment_id).innerHTML = "回复数:" + data.reply_comment_reply_num;
+                    document.getElementById("top_reply_num_" + top_comment_id).innerHTML = "回复数:" + data.top_comment_reply_num;
+                    document.getElementById("comment_num_" + tweet_id).innerHTML = "评论数:" + data.tweet_comment_num;
+                };
+                sure_comment(comment, comment_id, top_comment_id, tweet_id, error, success);
+            };
+            div.insertBefore(cancel, btn);
+            btn.hidden = true;
+        }
+
+        $('.reply_top_comment_btn').click(reply_top_comment);
+        $('.reply_comment_btn').click(reply_comment);
+
+        $('.post_comment_btn').click(function (param) {
+            var tweet_id = Number(param.target.id.substr(17));
+            var comment = document.getElementById("post_comment_" + tweet_id).value.toString();
+            $.ajax({
+                type: "POST",
+                url: "/sessions/post_comment",
+                data: {"comment": comment, "tweet_id": tweet_id},
+                dataType: "json",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    //alert(JSON.stringify(XMLHttpRequest));
+                    //alert(textStatus);
+                    alert(errorThrown);
+                    //alert("失败");
+                },
+                success: function (data, textStatus) {
+                    //alert(JSON.stringify(data));
+                    //alert(textStatus);
+                    var status = data.status.toString();
+                    if ("success" === status) {
+                        add_top_cmment(data.tweet_id, data.id, comment);
+                        var comment_num = document.getElementById("comment_num_" + tweet_id);
+                        comment_num.innerHTML = "评论数:" + data.num;
+                    } else {
+                        document.getElementById("post_comment_" + tweet_id).setAttribute("value", "");
+                        document.getElementById("post_comment_" + tweet_id).setAttribute("placeholder", data.info);
+                    }
+                }
+            });
+        });
         $('#add_tag_btn').click(function () {
             var newtag = document.getElementById("newtag").value.toString();
             $.ajax({
