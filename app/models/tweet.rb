@@ -15,6 +15,7 @@ class Tweet < ActiveRecord::Base
     end
   end
 
+  # 格式化动态
   def Tweet.process_tweets(tweets, recommends, user_id)
     tweets_list = []
     recommends.each do |tweet|
@@ -60,6 +61,7 @@ class Tweet < ActiveRecord::Base
     tweets_list
   end
 
+  # 转发动态
   def Tweet.transmit_tweet(old_tweet, contents, user_id)
     tweet = Tweet.new
     tweet[:user_id] = user_id
@@ -110,11 +112,12 @@ class Tweet < ActiveRecord::Base
     end
   end
 
+  # 删除动态和相关信息
   def Tweet.delete_tweet(tweet_id)
     Tweet.where('id = ?', tweet_id).delete_all and Comment.where('tweet_id = ?', tweet_id).delete_all and TweetTag.where('tweet_id = ?', tweet_id).delete_all and TweetThumbsUp.where('tweet_id = ?', tweet_id).delete_all
   end
 
-  # TODO 获取推荐内容,返回最多两条,去重
+  # 获取推荐内容,返回最多两条,去重
   def Tweet.get_recommend_tweets(user_id)
     hr = Tweet.where('id in (select tweet_id from hot_recommends)')
     tr = Tweet.where('id in (select tweet_id from tag_recommends where user_id = ?)', user_id)

@@ -16,6 +16,7 @@ class TweetThumbsUp < ActiveRecord::Base
     end
   end
 
+  # 是否点赞
   def TweetThumbsUp.find_thumbs_up(user_id, tweet_id)
     r = TweetThumbsUp.where('user_id = ? and tweet_id = ?', user_id, tweet_id)
     return r.length > 0

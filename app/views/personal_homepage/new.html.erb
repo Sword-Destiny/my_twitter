@@ -111,8 +111,8 @@
         <input type="text" placeholder="New Name" id="newname">
         <button type="button" id="update_name_btn">修改名字</button>
         <br>
-        <input type="password" placeholder="New Password" id="password">
-        <input type="password" placeholder="Repeat" id="password_repeat">
+        <input type="password" placeholder="New Password" id="npassword">
+        <input type="password" placeholder="Repeat" id="npassword_repeat">
         <button type="button" id="update_password_btn">修改密码</button>
         <br>
         <form action="/personal_homepage/update_head_picture" method="post" id="uploadForm" enctype="multipart/form-data">
@@ -422,8 +422,8 @@
         $('.tag_btn').click(delete_tag);
 
         $('#update_password_btn').click(function () {
-            var password = document.getElementById("password").value.toString();
-            var password_repeat = document.getElementById("password_repeat").value.toString();
+            var password = document.getElementById("npassword").value.toString();
+            var password_repeat = document.getElementById("npassword_repeat").value.toString();
             $.ajax({
                 type: "POST",
                 url: "/personal_homepage/update_password",
@@ -440,11 +440,11 @@
                     //alert(textStatus);
                     var status = data.status.toString();
                     if ("success" === status) {
-                        $('#password').val('').attr("placeholder", data.info);
-                        $('#password_repeat').val('').attr("placeholder", "Repeat");
+                        $('#npassword').val('').attr("placeholder", data.info);
+                        $('#npassword_repeat').val('').attr("placeholder", "Repeat");
                     } else {
-                        $('#password').val('').attr("placeholder", data.info);
-                        $('#password_repeat').val('').attr("placeholder", "Repeat");
+                        $('#npassword').val('').attr("placeholder", data.info);
+                        $('#npassword_repeat').val('').attr("placeholder", "Repeat");
                     }
                 }
             });

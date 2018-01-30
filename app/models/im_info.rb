@@ -1,5 +1,6 @@
 class ImInfo < ActiveRecord::Base
 
+  # 发送私信
   def ImInfo.send_im_info(sender_id, receiver_id, contents)
     im_info = ImInfo.new
     im_info[:from] = sender_id
@@ -9,6 +10,7 @@ class ImInfo < ActiveRecord::Base
     im_info.save
   end
 
+  # 阅读所有私信
   def ImInfo.read_all_im_info(receiver_id)
     receiver = User.find_by(id: receiver_id)
     unless receiver
@@ -19,6 +21,7 @@ class ImInfo < ActiveRecord::Base
     end
   end
 
+  # 阅读某一条私信
   def ImInfo.read_im_info(info_id)
     info =ImInfo.find_by(id: info_id)
     unless info
@@ -33,6 +36,7 @@ class ImInfo < ActiveRecord::Base
     end
   end
 
+  # 列出所有未读私信
   def ImInfo.list_all_unread_im_info(receiver_id)
     infos = ImInfo.where('"to" = ? and read = 0', receiver_id).order('"from"')
     im_infos = []

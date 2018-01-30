@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
+  # 密码字段加密
   has_secure_password
 
+  # 注册用户
   def User.register(name, password)
     user = User.new
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
@@ -21,6 +23,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # 格式化用户信息
   def User.process_users(users)
     users_list = []
     users.each do |user|
@@ -30,6 +33,7 @@ class User < ActiveRecord::Base
     users_list
   end
 
+  # 更新用户头像
   def User.update_head_picture(user_id, file, name)
     new_url = process_head_picture(file, user_id, name)
     user = User.find_by(id: user_id)
@@ -40,6 +44,7 @@ class User < ActiveRecord::Base
     return r, new_url
   end
 
+  # 处理头像，缩放切割图片
   def User.process_head_picture(file, user_id, name)
     dir_path = "#{Rails.root}/public"
     file_ext = name[/\.[^.]+$/]
@@ -58,6 +63,7 @@ class User < ActiveRecord::Base
     return store_path
   end
 
+  # 更新用户名
   def User.update_name(user_id, name)
     user = User.find_by(id: user_id)
     unless user
@@ -66,24 +72,29 @@ class User < ActiveRecord::Base
     user.update_attributes(:name => name)
   end
 
+  # 更改密码
   def User.update_password(user, password)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
     password_digest = BCrypt::Password.create(password, cost: cost)
     user.update_attributes(:password_digest => password_digest)
   end
 
+  # 获取用户
   def User.get_user(user_id)
     User.find_by(id: user_id)
   end
 
+  # 搜索用户名字和id
   def User.search_user_name_id(keyword)
     User.where('name like "%'+keyword+'%" or id = ?', keyword)
   end
 
+  # 搜索用户标签
   def User.search_user_tag(keyword)
     User.where('id in ( select user_id from user_tags where tag = ? )', keyword)
   end
 
+  # 搜索用户
   def User.search_user(keyword)
     User.search_user_name_id(keyword)+User.search_user_tag(keyword)
   end

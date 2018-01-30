@@ -45,6 +45,8 @@ class Comment < ActiveRecord::Base
     end
   end
 
+
+  # 回复顶级评论
   def Comment.reply_top_comment(contents, user_id, tweet, top_comment)
     comment = Comment.new
     comment[:tweet_id] = tweet[:id]

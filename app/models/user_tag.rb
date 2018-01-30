@@ -14,12 +14,9 @@ class UserTag < ActiveRecord::Base
     UserTag.where('id = ? and user_id = ?', tag_id, user[:id]).delete_all
   end
 
+  # 列出所有标签
   def UserTag.list_tags(user_id)
     UserTag.where('user_id = ?',user_id)
-  end
-
-  def taglen(user_id)
-    UserTag
   end
 
 end

@@ -17,6 +17,7 @@ class CommentThumbsUp < ActiveRecord::Base
     end
   end
 
+  # 是否点赞
   def CommentThumbsUp.find_thumbs_up(user_id, comment_id)
     r = CommentThumbsUp.where('user_id = ? and comment_id = ?', user_id, comment_id)
     return r.length > 0
