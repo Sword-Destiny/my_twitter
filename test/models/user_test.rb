@@ -1,8 +1,10 @@
-#vim people_test.rb
+#vim 
 require 'minitest/autorun'
 require './user'
-require test_help
-
+require test_helper
+# test of model/user.rb
+#test of model/user.rb
+#test of model/user.rb
 class TestUser < ActiveSupport::TestCase
   def setup
     @user = User.new(name:"bai", password:"123456")
