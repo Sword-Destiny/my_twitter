@@ -11,9 +11,23 @@ class TestImInfo < ActiveSupport::TestCase
   #   assert true
   # end
   def setup
-    @imfo = ImInfo.
+    @imfo = ImInfo.new
     
   end
   
-
+  test "info should be valid" do
+    assert @info.valid?
+  end
+  
+  test "send_im_info should be valid " do
+    @info = ImInfo.send_im_info(11,12,"hello,Bai!")
+    assert_equal 11 , @info[:from]
+    assert_equal 12 , @info[:to]
+    assert_equal "hello,Bai" , @info[:info]
+    assert_equal 0 , @info[:read]
+  end
+  
+  test "read_im_info should be valid" do
+    
+  end
 end
