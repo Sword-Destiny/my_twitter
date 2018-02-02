@@ -1,7 +1,7 @@
 #vim 
 require 'minitest/autorun'
 require './user'
-require test_helper
+require 'test_helper'
 # test of model/user.rb
 #test of model/user.rb
 #test of model/user.rb

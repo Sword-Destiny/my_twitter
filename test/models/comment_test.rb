@@ -2,7 +2,7 @@
 require 'minitest/autorun'
 require './comment'
 require './tweet'
-require test_helper
+require 'test_helper'
 # test of model/comment.rb
 #test of model/comment.rb
 #test of model/comment.rb
