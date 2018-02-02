@@ -28,6 +28,23 @@ class TestImInfo < ActiveSupport::TestCase
   end
   
   test "read_im_info should be valid" do
-    
+    @info = ImInfo.send_im_info(11,12,"hello,Bai!")
+    info[:to] = 12
+    info =@info.find_by(id: 1)
+      unless info
+       assert false
+      end
+      user = User.find_by(id: info[:to])
+      unless user
+      assert false
+      end
+  end
+  
+  test "read_all_im_info should be valid" do
+    @info = ImInfo.send_im_info(11,12,"hello,Bai!")
+    receiver = User.find_by(id: 12)
+    unless receiver
+      assert false
+    end
   end
 end
